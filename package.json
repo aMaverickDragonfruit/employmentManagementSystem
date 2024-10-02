@@ -1,0 +1,11 @@
+{
+  "name": "employment_management_system",
+  "version": "1.0.0",
+  "description": "from 某家湾区小分队",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
