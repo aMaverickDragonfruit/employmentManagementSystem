@@ -91,7 +91,7 @@ export default function AppSider() {
 
   return (
     <Sider
-      width='20%'
+      width='18%'
       style={siderStyle}
     >
       <TopMenu isHR={isHR} />

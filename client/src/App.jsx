@@ -1,14 +1,16 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Register from './pages/register';
-import Login from './pages/login';
-import OnboardingForm from './pages/OnboardingForm';
-import Profile from './pages/profile';
-import VisaManagement from './pages/visaManagement';
-import EmployeeProfiles from './pages/employeeProfiles';
-import EmployeeRegistration from './pages/EmployeeRegistration';
-import EmployeeVisaStatus from './pages/EmployeeVisaStatus';
-import MainLayout from './components/Layout';
-import Testing from './pages/Testing';
+import Register from './pages/auth/Register';
+import Login from './pages/auth/Login';
+import OnboardingForm from './pages/employee/OnboardingForm';
+import Profile from './pages/employee/Profile';
+import VisaManagement from './pages/employee/VisaManagement';
+import EmployeeProfiles from './pages/hr/EmployeeProfiles';
+import EmployeeRegistration from './pages/hr/EmployeeRegistration';
+import EmployeeVisaStatus from './pages/hr/EmployeeVisaStatus';
+import MainLayout from './components/layout/Layout';
+import UpdatePassword from './pages/auth/UpdatePassword';
+import Styles from './pages/Styles';
+import PasswordUpdated from './pages/auth/PasswordUpdated';
 
 export default function App() {
   return (
@@ -26,6 +28,14 @@ export default function App() {
             <Route
               path='login'
               element={<Login />}
+            />
+            <Route
+              path='forgot-password'
+              element={<UpdatePassword />}
+            />
+            <Route
+              path='password-updated'
+              element={<PasswordUpdated />}
             />
             <Route
               path='onboarding-form'
@@ -53,8 +63,8 @@ export default function App() {
             />
           </Route>
           <Route
-            path='/testing'
-            element={<Testing />}
+            path='/styles'
+            element={<Styles />}
           />
         </Routes>
       </Router>
