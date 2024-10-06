@@ -6,6 +6,13 @@ import {
   FacebookFilled,
 } from '@ant-design/icons';
 
+const footerStyle = {
+  backgroundColor: '#0F172A',
+  color: '#F8FAFC',
+  display: 'flex',
+  justifyContent: 'space-between',
+};
+
 const Options = ({ options, optionsStyle, itemsStyle }) => {
   return (
     <div className={`flex gap-4 flex-nowrap ${optionsStyle}`}>
@@ -31,18 +38,18 @@ export default function AppFooter() {
   const services = ['Contact us', 'Privacy Police', 'Help'];
 
   return (
-    <Footer className='flex gap-2 flex-wrap md:flex-nowrap flex-col md:flex-row items-center md:justify-between px-16 py-4 w-full h-auto bg-slate-900 text-slate-50 '>
-      <p className='order-3 md:order-1'>@2022 All Right Reserved</p>
+    <Footer style={footerStyle}>
+      <p>@2022 All Right Reserved</p>
 
       <Options
         options={icons}
-        optionsStyle={'order-1 md:order-2'}
-        itemsStyle={'text-xl mr-2'}
+        optionsStyle={''}
+        itemsStyle={'text-xl'}
       ></Options>
 
       <Options
         options={services}
-        optionsStyle={'order-2 md:order-3'}
+        optionsStyle={''}
       ></Options>
     </Footer>
   );
