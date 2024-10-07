@@ -5,7 +5,7 @@ import {
   updateUser,
   deleteUser,
 } from '../controllers/users.js';
-import { verifyToken, checkHR } from '../middlewares/auth.js';
+import { verifyLoginToken, checkHR } from '../middlewares/auth.js';
 
 const router = express.Router();
 
