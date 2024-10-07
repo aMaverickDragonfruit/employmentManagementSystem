@@ -2,6 +2,7 @@ import express from 'express';
 import { check } from 'express-validator';
 import { loginUser, registerUser } from '../controllers/auth.js';
 import { validate } from '../middlewares/validation.js';
+import { verifyRegisterToken } from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -21,12 +22,13 @@ router.post(
 );
 
 /**
- * @route POST /api/auth/register
+ * @route POST /api/auth/register/:registerToken
  * @desc Register user
  * @access Public
  */
 router.post(
-  '/register',
+  '/register/:registerToken',
+  verifyRegisterToken,
   [
     check('lastName', 'Last name is missing in Token').notEmpty(),
     check('firstName', 'First name is missing in Token').notEmpty(),
