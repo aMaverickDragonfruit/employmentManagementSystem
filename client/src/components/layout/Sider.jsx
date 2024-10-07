@@ -87,7 +87,7 @@ const BottomMenu = () => {
 };
 
 export default function AppSider() {
-  const [isHR, setIsHR] = useState(true);
+  const [isHR, setIsHR] = useState(false);
 
   return (
     <Sider

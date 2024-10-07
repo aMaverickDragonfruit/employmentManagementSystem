@@ -25,7 +25,7 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   return (
     <ConfigProvider
