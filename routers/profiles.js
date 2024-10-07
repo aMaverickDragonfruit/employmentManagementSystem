@@ -7,7 +7,7 @@ import {
   updateProfileById,
   updateProfileByUserId,
 } from '../controllers/profiles.js';
-import { verifyToken, checkHR } from '../middlewares/auth.js';
+import { verifyLoginToken, checkHR } from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router.get('/', getAllProfiles);
  * @desc Get current user's profile
  * @access Private
  */
-router.get('/me', verifyToken, getCurUserProfile);
+router.get('/me', verifyLoginToken, getCurUserProfile);
 
 /**
  * @route GET /api/profiles/:id

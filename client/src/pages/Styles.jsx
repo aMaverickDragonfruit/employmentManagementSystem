@@ -3,8 +3,7 @@ const { Title, Text } = Typography;
 import styled from 'styled-components';
 
 const debugStyle = {
-  border: '2px',
-  border: 'solid',
+  border: '2px solid',
   borderColor: 'red',
 };
 
@@ -25,18 +24,12 @@ export default function Styles() {
       <div className='typography'>
         <Title>Typography</Title>
         <Title style={''}>Main Title: default title</Title>
-        <Title
-          style={''}
-          level={3}
-        >
+        <Title style={''} level={3}>
           Other Title: title level 3
         </Title>
         <div className='text flex flex-col'>
           <Text style={''}>Text (default)</Text>
-          <Text
-            style={''}
-            type='secondary'
-          >
+          <Text style={''} type='secondary'>
             Text (secondary)
           </Text>
         </div>
