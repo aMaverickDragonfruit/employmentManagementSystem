@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { AuthError } from '../utils/error.js';
 
-export const verifyToken = (req, res, next) => {
+export const verifyLoginToken = (req, res, next) => {
   const token =
     req.header('Authorization') ||
     req.headers?.authorization?.match(/^Bearer (.+)/)[1];
@@ -14,7 +14,32 @@ export const verifyToken = (req, res, next) => {
     req.user = decoded.user;
     next();
   } catch (err) {
-    throw new AuthError('Invalid token');
+    if (err.name == 'TokenExpiredError') {
+      throw new AuthError('Token has expired.');
+    } else {
+      throw new AuthError('Invalid token.');
+    }
+  }
+};
+
+export const verifyRegisterToken = (req, res, next) => {
+  const token = req.params?.registerToken;
+
+  if (!token) {
+    throw new AuthError('Missing token from request URL!');
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const { firstName, middleName, lastName, email } = decoded;
+    Object.assign(req.body, { firstName, middleName, lastName, email });
+    next();
+  } catch (err) {
+    if (err.name == 'TokenExpiredError') {
+      throw new AuthError('Token has expired.');
+    } else {
+      throw new AuthError('Invalid token.');
+    }
   }
 };
 
