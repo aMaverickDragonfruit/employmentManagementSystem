@@ -38,7 +38,7 @@ const TopMenu = ({ isHR }) => {
         onClick: () => navigate('/employee-visa-status'),
       },
       {
-        label: 'Hire management',
+        label: 'Hiring management',
         key: '2',
         icon: <UsergroupAddOutlined />,
         onClick: () => navigate('/employee-registration'),
@@ -87,7 +87,7 @@ const BottomMenu = () => {
 };
 
 export default function AppSider() {
-  const [isHR, setIsHR] = useState(false);
+  const [isHR, setIsHR] = useState(true);
 
   return (
     <Sider
