@@ -41,7 +41,18 @@ const TopMenu = ({ isHR }) => {
         label: 'Hiring management',
         key: '2',
         icon: <UsergroupAddOutlined />,
-        onClick: () => navigate('/employee-registration'),
+        children: [
+          {
+            key: '3',
+            label: 'Employee Registration',
+            onClick: () => navigate('/employee-registration'),
+          },
+          {
+            key: '4',
+            label: 'Onboarding Application',
+            onClick: () => navigate('/onboarding-applications'),
+          },
+        ],
       },
     ];
   } else {
