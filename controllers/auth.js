@@ -33,7 +33,14 @@ export const loginUser = async (req, res) => {
     res.status(200).json({
       message: 'User logged in successfully',
       token,
-      id: user._id.toString,
+      // id: user._id.toString(),
+      user: {
+        id: user._id.toString(),
+        firstName: user.firstName,
+        middleName: user.middleName || '',
+        lastName: user.lastName,
+        isHR: user.isHR,
+      },
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -70,9 +77,7 @@ export const registerUser = async (req, res) => {
     const updatedRegistration = await Registration.findOneAndUpdate(
       { email },
       { status: true },
-      {
-        new: true,
-      }
+      { new: true }
     );
 
     res.status(201).json({
