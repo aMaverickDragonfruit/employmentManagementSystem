@@ -4,16 +4,10 @@ import Footer from './Footer';
 import Home from '../../pages/Home';
 import Navbar from './Navbar';
 import Sider from './Sider';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-
-// const contentStyle = {
-//   textAlign: 'center',
-//   minHeight: '100%',
-//   lineHeight: '120px',
-//   color: '#fff',
-//   backgroundColor: '#0958d9',
-// };
+import { useDispatch, useSelector } from 'react-redux';
+import userSlice from '../../features/userSlice';
 
 const layoutStyle = {
   overflow: 'hidden',
@@ -25,7 +19,12 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // const [isAuthenticated, setIsAuthenticated] = useState(true);
+  // const navigate = useNavigate();
+  // const dispatch = useDispatch();
+  const { user, isAuthenticated, loading, error } = useSelector(
+    (state) => state.userSlice
+  );
 
   return (
     <ConfigProvider
@@ -39,7 +38,7 @@ export default function MainLayout() {
         {/* <Header style={headerStyle}>Header</Header> */}
         <Navbar />
         <Layout>
-          {isAuthenticated ? <Sider /> : <></>}
+          {user && isAuthenticated ? <Sider isHR={user.isHR} /> : <></>}
           <Content>{currentPath === '/' ? <Home /> : <Outlet />}</Content>
         </Layout>
         <Footer />

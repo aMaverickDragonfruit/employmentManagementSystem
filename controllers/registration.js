@@ -35,23 +35,33 @@ export const createRegistration = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: '3h' }
   );
-  const registerationLink = `http://localhost:3001/login/${token}`;
+  const registerationLink = `http://localhost:3001/register/${token}`;
 
   if (!middleName) {
     fullName = [firstName, lastName].join(' ').toString();
   } else {
     fullName = [firstName, middleName, lastName].join(' ').toString();
   }
+  let newRegistration = {};
   try {
-    const registration = await Registration.create({
-      name: fullName,
-      registerationLink,
-      email,
-    });
+    newRegistration = await Registration.findOne({ email });
+    // if registration does not exist
+    if (!newRegistration) {
+      newRegistration = await Registration.create({
+        name: fullName,
+        registerationLink,
+        email,
+      });
+    } else {
+      newRegistration.name = fullName;
+      newRegistration.registerationLink = registerationLink;
+      newRegistration.status = false;
+      newRegistration.save();
+    }
 
-    await sendMail(registration, 'Onboarding Application');
+    await sendMail(newRegistration, 'Onboarding Application');
 
-    res.status(200).json(registration);
+    res.status(200).json(newRegistration);
   } catch (err) {
     console.error(err.message);
     res.status(500).json({ message: 'Server Error' });
