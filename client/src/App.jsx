@@ -18,42 +18,15 @@ export default function App() {
     <>
       <Router>
         <Routes>
-          <Route
-            path='/'
-            element={<MainLayout />}
-          >
-            <Route
-              path='register'
-              element={<Register />}
-            />
-            <Route
-              path='login'
-              element={<Login />}
-            />
-            <Route
-              path='forgot-password'
-              element={<UpdatePassword />}
-            />
-            <Route
-              path='password-updated'
-              element={<PasswordUpdated />}
-            />
-            <Route
-              path='onboarding-form'
-              element={<OnboardingForm />}
-            />
-            <Route
-              path='profile'
-              element={<Profile />}
-            />
-            <Route
-              path='visa-management'
-              element={<VisaManagement />}
-            />
-            <Route
-              path='employee-profiles'
-              element={<EmployeeProfiles />}
-            />
+          <Route path='/' element={<MainLayout />}>
+            <Route path='register/:registerToken' element={<Register />} />
+            <Route path='login' element={<Login />} />
+            <Route path='forgot-password' element={<UpdatePassword />} />
+            <Route path='password-updated' element={<PasswordUpdated />} />
+            <Route path='onboarding-form' element={<OnboardingForm />} />
+            <Route path='profile' element={<Profile />} />
+            <Route path='visa-management' element={<VisaManagement />} />
+            <Route path='employee-profiles' element={<EmployeeProfiles />} />
             <Route
               path='employee-visa-status'
               element={<EmployeeVisaStatus />}
@@ -67,10 +40,7 @@ export default function App() {
               element={<OnboardingApplications />}
             />
           </Route>
-          <Route
-            path='/styles'
-            element={<Styles />}
-          />
+          <Route path='/styles' element={<Styles />} />
         </Routes>
       </Router>
     </>
