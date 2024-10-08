@@ -5,7 +5,7 @@ import {
 } from '../api/registration';
 
 const initialState = {
-  registration: [],
+  registrations: [],
   loading: false,
   error: null,
 };
@@ -52,7 +52,7 @@ const registrationSlice = createSlice({
       .addCase(fetchRegistrations.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.registration = action.payload;
+        state.registrations = action.payload;
       })
       .addCase(fetchRegistrations.rejected, (state, action) => {
         state.loading = false;
