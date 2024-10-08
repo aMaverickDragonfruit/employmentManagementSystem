@@ -11,6 +11,7 @@ import MainLayout from './components/layout/Layout';
 import UpdatePassword from './pages/auth/UpdatePassword';
 import Styles from './pages/Styles';
 import PasswordUpdated from './pages/auth/PasswordUpdated';
+import OnboardingApplications from './pages/hr/OnboardingApplications';
 
 export default function App() {
   return (
@@ -54,12 +55,16 @@ export default function App() {
               element={<EmployeeProfiles />}
             />
             <Route
+              path='employee-visa-status'
+              element={<EmployeeVisaStatus />}
+            />
+            <Route
               path='employee-registration'
               element={<EmployeeRegistration />}
             />
             <Route
-              path='employee-visa-status'
-              element={<EmployeeVisaStatus />}
+              path='onboarding-applications'
+              element={<OnboardingApplications />}
             />
           </Route>
           <Route
