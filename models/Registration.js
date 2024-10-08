@@ -10,7 +10,7 @@ const RegistrationSchema = new Schema(
       type: String,
       required: true,
     },
-    registerationLink: {
+    registrationLink: {
       type: String,
       required: true,
     },
