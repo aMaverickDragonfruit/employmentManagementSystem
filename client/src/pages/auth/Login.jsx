@@ -3,29 +3,38 @@ import AuthFields from '../../components/auth/AuthFields';
 import AuthForm from '../../components/auth/AuthForm';
 import AuthLayout from '../../components/auth/AuthLayout';
 import { useState } from 'react';
+import { loginUser } from '../../features/userSlice';
+import { useDispatch } from 'react-redux';
+
+const fields = [
+  {
+    placeholder: 'Email',
+    name: 'userName',
+    type: 'text',
+  },
+  {
+    placeholder: 'Password',
+    name: 'password',
+    type: 'password',
+  },
+];
 
 export default function LogIn() {
   const [err, setErr] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const dispatch = useDispatch();
 
   const from = location.state?.from?.pathname || '/';
 
-  const fields = [
-    {
-      placeholder: 'Email',
-      name: 'email',
-      type: 'text',
-    },
-    {
-      placeholder: 'Password',
-      name: 'password',
-      type: 'password',
-    },
-  ];
-
   const onSubmit = (data) => {
-    console.log(data);
+    dispatch(loginUser(data)).then((action) => {
+      if (loginUser.fulfilled.match(action)) {
+        navigate(from, { replace: true });
+      } else if (loginUser.rejected.match(action)) {
+        setErr(action.payload);
+      }
+    });
   };
 
   const onClosed = () => {
@@ -44,15 +53,6 @@ export default function LogIn() {
           err={err}
         />
         <div className='flex flex-col md:flex-row items-center md:justify-between'>
-          <p>
-            Or{' '}
-            <span
-              className='text-indigo-500 cursor-pointer'
-              onClick={() => navigate('/register')}
-            >
-              Register
-            </span>
-          </p>
           <p
             className='text-indigo-500 cursor-pointer'
             onClick={() => navigate('/forgot-password')}
