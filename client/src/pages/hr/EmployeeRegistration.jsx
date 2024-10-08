@@ -1,8 +1,11 @@
-import { Button } from 'antd';
-import { useState } from 'react';
+import { Button, Table } from 'antd';
+import { useState, useEffect } from 'react';
 import AuthFields from '../../components/auth/AuthFields';
 import AuthForm from '../../components/auth/AuthForm';
-import { createRegistration } from '../../features/registrationSlice';
+import {
+  createRegistration,
+  fetchRegistrations,
+} from '../../features/registrationSlice';
 import { useDispatch, useSelector } from 'react-redux';
 
 const InvitationForm = ({ onSubmit, onClose, err }) => {
@@ -61,12 +64,59 @@ const InvitationForm = ({ onSubmit, onClose, err }) => {
   );
 };
 
+const RegistrationTable = ({ data }) => {
+  const columns = [
+    {
+      title: 'Last Updated',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'Registration Link',
+      dataIndex: 'registrationLink',
+      key: 'registrationLink',
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+    },
+  ];
+
+  // const dataSource = data.map();
+  const dataSource = [];
+
+  return (
+    <Table
+      dataSource={data}
+      columns={columns}
+    />
+  );
+};
+
 export default function EmployeeRegistration() {
   const dispatch = useDispatch();
-  const { loading, error } = useSelector((state) => state.registrationSlice);
+  const { registrations, loading, error } = useSelector(
+    (state) => state.registrationSlice
+  );
   const [showInvitation, setShowInvitation] = useState(false);
-
   const [err, setErr] = useState(null);
+
+  useEffect(() => {
+    dispatch(fetchRegistrations());
+  }, [dispatch]);
+
+  console.log(registrations);
 
   const onSubmit = (data) => {
     dispatch(createRegistration(data));
@@ -80,12 +130,19 @@ export default function EmployeeRegistration() {
 
   return (
     <>
-      <Button type='primary' onClick={() => setShowInvitation(true)}>
+      <Button
+        type='primary'
+        onClick={() => setShowInvitation(true)}
+      >
         Invite Registration
       </Button>
       {showInvitation && (
-        <InvitationForm onSubmit={onSubmit} onClose={onClose} />
+        <InvitationForm
+          onSubmit={onSubmit}
+          onClose={onClose}
+        />
       )}
+      <RegistrationTable data={registrations} />
     </>
   );
 }
