@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
-import { Children, lazy, useState } from 'react';
-import { Typography, Layout, Badge, Avatar, Menu, Dropdown } from 'antd';
+import { Typography, Layout, Badge, Avatar, Dropdown } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { clearUser } from '../../features/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
 const { Header } = Layout;
 const { Text } = Typography;
 
@@ -22,10 +24,7 @@ const menuStyle = {};
 
 const Logo = ({ handleClick, className }) => {
   return (
-    <div
-      className={`w-fit cursor-pointer${className}`}
-      onClick={handleClick}
-    >
+    <div className={`w-fit cursor-pointer ${className}`} onClick={handleClick}>
       <span className='text-xl font-bold'>
         {/* Display on large screens */}
         <span className='hidden lg:inline'>Management</span>
@@ -48,51 +47,47 @@ const UserAvatar = () => {
 };
 
 const User = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [isHR, setIsHR] = useState(true);
-  const [userName, setUserName] = useState('user first name');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user, isAuthenticated, loading, error } = useSelector(
+    (state) => state.userSlice
+  );
+
+  const handleLogout = () => {
+    dispatch(clearUser());
+    navigate('/');
+  };
 
   const menuItems = [
     {
       label: 'Log out',
       key: 'userLogout',
-      onClick: () => console.log('log out'),
+      onClick: handleLogout,
     },
   ];
 
-  if (!isAuthenticated) {
+  if (user && isAuthenticated) {
     return (
-      <div>
-        <UserAvatar />
-        <Text
-          style={textStyle}
-          onClick={() => navigate('/login')}
-        >
-          Log in
-        </Text>
+      <div className='flex items-center'>
+        {user.isHR ? (
+          <Badge count={'HR'} size='small'>
+            <UserAvatar />
+          </Badge>
+        ) : (
+          <UserAvatar />
+        )}
+        <Dropdown menu={{ items: menuItems }} placement='bottomRight'>
+          <Text style={textStyle}>{user.firstName}</Text>
+        </Dropdown>
       </div>
     );
   }
-
   return (
-    <div className='flex items-center'>
-      {isHR ? (
-        <Badge
-          count={'HR'}
-          size='small'
-        >
-          <UserAvatar />
-        </Badge>
-      ) : (
-        <UserAvatar />
-      )}
-      <Dropdown
-        menu={{ items: menuItems }}
-        placement='bottomRight'
-      >
-        <Text style={textStyle}>{userName}</Text>
-      </Dropdown>
+    <div>
+      <UserAvatar />
+      <Text style={textStyle} onClick={() => navigate('/login')}>
+        Log in
+      </Text>
     </div>
   );
 };
@@ -102,7 +97,7 @@ export default function Navbar() {
 
   return (
     <Header style={headerStyle}>
-      <Logo handleClick={() => navigate('./Home')} />
+      <Logo handleClick={() => navigate('/')} />
       <User />
     </Header>
   );

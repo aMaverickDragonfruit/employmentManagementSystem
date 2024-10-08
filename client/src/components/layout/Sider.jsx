@@ -9,6 +9,8 @@ import {
   ProfileOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
+import { clearUser } from '../../features/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const siderStyle = {
   textAlign: 'left',
@@ -82,29 +84,27 @@ const TopMenu = ({ isHR }) => {
 };
 
 const BottomMenu = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(clearUser());
+    navigate('/');
+  };
+
   const menuItems = [
     {
       label: 'Log out',
       icon: <LogoutOutlined />,
-      onClick: () => console.log('log out'),
+      onClick: handleLogout,
     },
   ];
-  return (
-    <Menu
-      items={menuItems}
-      mode='inline'
-    />
-  );
+  return <Menu items={menuItems} mode='inline' />;
 };
 
-export default function AppSider() {
-  const [isHR, setIsHR] = useState(true);
-
+export default function AppSider({ isHR }) {
   return (
-    <Sider
-      width='18%'
-      style={siderStyle}
-    >
+    <Sider width='18%' style={siderStyle}>
       <TopMenu isHR={isHR} />
       <BottomMenu />
     </Sider>
