@@ -2,6 +2,8 @@ import { Button } from 'antd';
 import { useState } from 'react';
 import AuthFields from '../../components/auth/AuthFields';
 import AuthForm from '../../components/auth/AuthForm';
+import { createRegistration } from '../../features/registrationSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const InvitationForm = ({ onSubmit, onClose, err }) => {
   const invitationFields = [
@@ -60,31 +62,29 @@ const InvitationForm = ({ onSubmit, onClose, err }) => {
 };
 
 export default function EmployeeRegistration() {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.registrationSlice);
   const [showInvitation, setShowInvitation] = useState(false);
 
   const [err, setErr] = useState(null);
 
   const onSubmit = (data) => {
-    console.log(data);
+    dispatch(createRegistration(data));
   };
 
   const onClose = () => {
     setShowInvitation(false);
   };
 
+  if (loading) return <p>Loading</p>;
+
   return (
     <>
-      <Button
-        type='primary'
-        onClick={() => setShowInvitation(true)}
-      >
+      <Button type='primary' onClick={() => setShowInvitation(true)}>
         Invite Registration
       </Button>
       {showInvitation && (
-        <InvitationForm
-          onSubmit={onSubmit}
-          onClose={onClose}
-        />
+        <InvitationForm onSubmit={onSubmit} onClose={onClose} />
       )}
     </>
   );

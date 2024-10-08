@@ -1,5 +1,7 @@
 import User from '../models/User.js';
 import Profile from '../models/Profile.js';
+import Registration from '../models/Registration.js';
+
 import jwt from 'jsonwebtoken';
 
 export const loginUser = async (req, res) => {
@@ -65,10 +67,19 @@ export const registerUser = async (req, res) => {
       email: email,
     });
 
+    const updatedRegistration = await Registration.findOneAndUpdate(
+      { email },
+      { status: true },
+      {
+        new: true,
+      }
+    );
+
     res.status(201).json({
       message: 'User created successfully',
       user: newUser,
       profile: newProfile,
+      registration: updatedRegistration,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
