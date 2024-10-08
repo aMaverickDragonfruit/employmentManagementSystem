@@ -30,8 +30,8 @@ router.post(
   '/register/:registerToken',
   verifyRegisterToken,
   [
-    check('lastName', 'Last name is missing in Token').notEmpty(),
     check('firstName', 'First name is missing in Token').notEmpty(),
+    check('lastName', 'Last name is missing in Token').notEmpty(),
     check('email', 'Email is missing in Token').notEmpty(),
     check('userName', 'Please provide a valid email').isEmail(),
     check(
