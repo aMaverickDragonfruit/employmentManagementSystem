@@ -10,13 +10,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendMail = async (reciver, subject) => {
-  const { name, email, registerationLink } = reciver;
+const sendMail = async (receiver, subject) => {
+  const { name, email, registrationLink } = receiver;
   try {
     const mail = await transporter.sendMail({
       to: email,
       subject: subject,
-      html: `<h1>${registerationLink}</h1>`,
+      html: `<h1>${registrationLink}</h1>`,
     });
   } catch (error) {
     console.log(error.message);
