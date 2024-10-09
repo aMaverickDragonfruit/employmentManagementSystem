@@ -12,11 +12,38 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = async (receiver, subject) => {
   const { name, email, registrationLink } = receiver;
+  let emailContent = '';
+
+  if (subject === 'Onboarding Application') {
+    emailContent = `
+      <p>Dear ${name},</p>
+      <p>We are happy to have you joined iKunKun Business Int. You will need to sign up your account to complete your onboarding application.</p>
+      <p>Click <a href=${registrationLink}>here</a> to sign up your account. The registration link expires in 3 hours. Please sign up your account at your earliest convenience. Thank you.</p>
+      <p>Best regards</p>
+      <p>iKunKun HR Department</p>
+    `;
+  } else if (subject === 'Onboarding Reminder') {
+    emailContent = `
+    <p>Dear ${name},</p>
+    <p>This is an email to reminder for you to sign up your account and complete the onboarding application.</p>
+    <p>Click <a href=${registrationLink}>here</a> to sign up your account. The registration link expires in 3 hours. Please sign up your account at your earliest convenience. Thank you.</p>
+    <p>Best regards</p>
+    <p>iKunKun HR Department</p>
+  `;
+  } else {
+    emailContent = `
+    <p>Dear ${name},</p>
+    <p>Click <a href=${registrationLink}>here</a> to sign up your account. The registration link expires in 3 hours. Please sign up your account at your earliest convenience. Thank you.</p>
+    <p>Best regards</p>
+    <p>iKunKun HR Department</p>
+  `;
+  }
+
   try {
     const mail = await transporter.sendMail({
       to: email,
       subject: subject,
-      html: `<h1>${registrationLink}</h1>`,
+      html: `${emailContent}`,
     });
   } catch (error) {
     console.log(error.message);
