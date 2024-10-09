@@ -1,4 +1,6 @@
-import { Button, Table } from 'antd';
+import { Typography, Button, Table, Input } from 'antd';
+const { Title } = Typography;
+const { Search } = Input;
 import { useState, useEffect } from 'react';
 import AuthFields from '../../components/auth/AuthFields';
 import AuthForm from '../../components/auth/AuthForm';
@@ -7,6 +9,7 @@ import {
   fetchRegistrations,
 } from '../../features/registrationSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import PageLayout from '../../components/layout/Page';
 
 const InvitationForm = ({ onSubmit, onClose, err }) => {
   const invitationFields = [
@@ -65,20 +68,6 @@ const InvitationForm = ({ onSubmit, onClose, err }) => {
 };
 
 const RegistrationTable = ({ setErr, data }) => {
-  const dispatch = useDispatch();
-
-  const handleSendReminder = (record) => {
-    const data = {
-      email: record.email,
-    };
-    dispatch(createRegistration(data)).then((action) => {
-      if (createRegistration.fulfilled.match(action)) {
-        dispatch(fetchRegistrations());
-      } else if (createRegistration.rejected.match(action)) {
-        setErr(action.payload);
-      }
-    });
-  };
   const columns = [
     {
       title: 'Last Updated',
@@ -106,13 +95,13 @@ const RegistrationTable = ({ setErr, data }) => {
       dataIndex: 'registrationLink',
       key: 'registrationLink',
       render: (_, record) => (
-        <a
+        <Typography.Link
           href={record.registrationLink}
           target='_blank'
           rel='noopener noreferrer'
         >
           Registration Link
-        </a>
+        </Typography.Link>
       ),
     },
     {
@@ -127,7 +116,11 @@ const RegistrationTable = ({ setErr, data }) => {
       key: 'action',
       render: (action, record) => {
         if (action === 'Send Reminder') {
-          return <a onClick={() => handleSendReminder(record)}>{action}</a>;
+          return (
+            <Typography.Link onClick={() => handleSendReminder(record)}>
+              {action}
+            </Typography.Link>
+          );
         } else if (action) {
           return <span>{action}</span>;
         } else {
@@ -138,7 +131,6 @@ const RegistrationTable = ({ setErr, data }) => {
     },
   ];
 
-  // const dataSource = [];
   const dataSource = data.map((element) => {
     return {
       key: element._id,
@@ -150,6 +142,21 @@ const RegistrationTable = ({ setErr, data }) => {
       action: element.status ? 'N/A' : 'Send Reminder',
     };
   });
+
+  const dispatch = useDispatch();
+
+  const handleSendReminder = (record) => {
+    const data = {
+      email: record.email,
+    };
+    dispatch(createRegistration(data)).then((action) => {
+      if (createRegistration.fulfilled.match(action)) {
+        dispatch(fetchRegistrations());
+      } else if (createRegistration.rejected.match(action)) {
+        setErr(action.payload);
+      }
+    });
+  };
 
   return (
     <Table
@@ -172,8 +179,6 @@ export default function EmployeeRegistration() {
     dispatch(fetchRegistrations());
   }, [dispatch]);
 
-  console.log(registrations);
-
   const onSubmit = (data) => {
     dispatch(createRegistration(data)).then((action) => {
       if (createRegistration.fulfilled.match(action)) {
@@ -184,30 +189,42 @@ export default function EmployeeRegistration() {
     });
   };
 
-  const onClose = () => {
+  const handleInvitationClose = () => {
     setShowInvitation(false);
   };
 
   if (loading) return <p>Loading</p>;
 
   return (
-    <>
-      <Button
-        type='primary'
-        onClick={() => setShowInvitation(true)}
-      >
-        Invite Registration
-      </Button>
-      {showInvitation && (
-        <InvitationForm
-          onSubmit={onSubmit}
-          onClose={onClose}
-        />
-      )}
+    <PageLayout>
+      <Title>Employee Registrations</Title>
+      <div className='mt-10 mb-4 flex justify-between'>
+        <Title level={3}>Registration History</Title>
+        <Button
+          type='primary'
+          onClick={() => setShowInvitation(true)}
+        >
+          Invite Registration
+        </Button>
+      </div>
       <RegistrationTable
         setErr={setErr}
         data={registrations}
       />
-    </>
+      {showInvitation && (
+        <>
+          <div className='absolute -top-1/4 left-1/4 z-50 '>
+            <InvitationForm
+              onSubmit={onSubmit}
+              onClose={handleInvitationClose}
+            />
+          </div>
+          <div
+            className='fixed inset-0 bg-slate-500 bg-opacity-50 z-40'
+            onClick={handleInvitationClose}
+          ></div>
+        </>
+      )}
+    </PageLayout>
   );
 }
