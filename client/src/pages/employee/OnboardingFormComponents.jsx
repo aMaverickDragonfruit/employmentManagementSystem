@@ -1,4 +1,6 @@
-import { Upload, message, Form, Input, Select } from 'antd';
+import { Upload, message, Form, Input, Select, DatePicker } from 'antd';
+const { RangePicker } = DatePicker;
+
 import { PlusOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
@@ -93,10 +95,29 @@ const InputField = ({ field }) => {
   } else if (field.type === 'select') {
     return (
       <Select
+        showSearch
         placeholder={field.placeholder}
         options={field.options}
         defaultValue={field.defaultOption}
         onChange={field.onChange}
+        onSearch={field.onSearch}
+        size='large'
+      />
+    );
+  } else if (field.type === 'datePicker') {
+    return (
+      <DatePicker
+        onChange={field.onChange}
+        format='MM-DD-YYYY'
+        size='large'
+      />
+    );
+  } else if (field.type === 'rangePicker') {
+    return (
+      <RangePicker
+        onChange={field.onChange}
+        format='MM-DD-YYYY'
+        size='large'
       />
     );
   } else {
