@@ -53,7 +53,7 @@ export const createRegistration = async (req, res) => {
         email,
       });
     } else {
-      newRegistration.name = fullName;
+      // newRegistration.name = fullName;
       newRegistration.registrationLink = registrationLink;
       newRegistration.status = false;
       newRegistration.save();
