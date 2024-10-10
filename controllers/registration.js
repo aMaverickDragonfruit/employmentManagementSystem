@@ -35,7 +35,7 @@ export const createRegistration = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: '3h' }
   );
-  const registrationLink = `http://localhost:3001/register/${token}`;
+  const registrationLink = `http://192.168.1.226:3001/register/${token}`;
 
   if (!middleName) {
     fullName = [firstName, lastName].join(' ').toString();
