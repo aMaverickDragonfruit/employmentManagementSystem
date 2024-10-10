@@ -1,3 +1,11 @@
+import { Typography } from 'antd';
+import PageLayout from '../../components/layout/Page';
+const { Title } = Typography;
+
 export default function EmployeeVisaStatus() {
-  return <h1>Employee Visa Status</h1>;
+  return (
+    <PageLayout>
+      <Title>Employee Visa Status</Title>
+    </PageLayout>
+  );
 }

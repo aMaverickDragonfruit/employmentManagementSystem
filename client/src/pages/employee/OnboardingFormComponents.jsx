@@ -1,7 +1,7 @@
-import { Upload, message, Form, Input, Select, DatePicker } from 'antd';
+import { Upload, message, Form, Input, Select, DatePicker, Button } from 'antd';
 const { RangePicker } = DatePicker;
 
-import { PlusOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 const InputLabel = ({ children }) => {
@@ -84,64 +84,125 @@ export const ProfilePictureUpload = () => {
   );
 };
 
-const InputField = ({ field }) => {
-  if (field.type === 'password') {
-    return (
-      <Input.Password
-        placeholder={field.placeholder}
-        size='large'
-      />
-    );
-  } else if (field.type === 'select') {
-    return (
-      <Select
-        showSearch
-        placeholder={field.placeholder}
-        options={field.options}
-        defaultValue={field.defaultOption}
-        onChange={field.onChange}
-        onSearch={field.onSearch}
-        size='large'
-      />
-    );
-  } else if (field.type === 'datePicker') {
-    return (
-      <DatePicker
-        onChange={field.onChange}
-        format='MM-DD-YYYY'
-        size='large'
-      />
-    );
-  } else if (field.type === 'rangePicker') {
-    return (
-      <RangePicker
-        onChange={field.onChange}
-        format='MM-DD-YYYY'
-        size='large'
-      />
-    );
-  } else {
-    return (
-      <Input
-        placeholder={field.placeholder}
-        size='large'
-      />
-    );
+const InputField = ({ field, value, onChange }) => {
+  const commonProps = {
+    placeholder: field.placeholder,
+    size: 'large',
+    value,
+    onChange,
+  };
+
+  switch (field.type) {
+    case 'password':
+      return <Input.Password {...commonProps} />;
+    case 'select':
+      return (
+        <Select
+          {...commonProps}
+          showSearch
+          options={field.options}
+          defaultValue={field.defaultOption}
+          onChange={(v) => {
+            onChange(v);
+            field.onChange && field.onChange(v);
+          }}
+          onSearch={field.onSearch}
+        />
+      );
+    case 'datePicker':
+      return (
+        <DatePicker
+          {...commonProps}
+          onChange={(date, dateString) => {
+            onChange(date);
+            field.onChange && field.onChange(date, dateString);
+          }}
+          format='MM-DD-YYYY'
+        />
+      );
+    case 'rangePicker':
+      return (
+        <RangePicker
+          {...commonProps}
+          onChange={(date, dateString) => {
+            onChange(date);
+            field.onChange && field.onChange(date, dateString);
+          }}
+          format='MM-DD-YYYY'
+        />
+      );
+    default:
+      return <Input {...commonProps} />;
   }
+};
+
+export const FormList = ({ listName, inputFields, isReferral }) => {
+  return (
+    <Form.List name={listName}>
+      {(fields, { add, remove }) => (
+        <>
+          {fields.map(({ key, name }) => (
+            <div
+              className='flex'
+              key={key}
+            >
+              {inputFields.map((field) => (
+                <Form.Item
+                  label={field.placeholder}
+                  key={field.name}
+                  name={[name, field.name]}
+                  rules={field.rules}
+                  hasFeedback
+                >
+                  <Input
+                    placeholder={field.placeholder}
+                    size='large'
+                  />
+                </Form.Item>
+              ))}
+
+              <MinusCircleOutlined onClick={() => remove(name)} />
+            </div>
+          ))}
+
+          <Form.Item>
+            {isReferral && fields.length >= 1 ? (
+              <Button
+                block
+                icon={<PlusOutlined />}
+                type='dashed'
+                disabled
+                onClick={() => add()}
+              >
+                Add Referral
+              </Button>
+            ) : (
+              <Button
+                block
+                icon={<PlusOutlined />}
+                type='dashed'
+                onClick={() => add()}
+              >
+                Add Referral
+              </Button>
+            )}
+          </Form.Item>
+        </>
+      )}
+    </Form.List>
+  );
 };
 
 export const FormItem = ({ field }) => {
   return (
     <Form.Item
+      label={field.placeholder}
       name={field.name}
       rules={field.rules}
       dependencies={field.dependencies}
       hasFeedback
     >
-      <div>
-        <InputField field={field} />
-        <InputLabel>{field.placeholder}</InputLabel>
-      </div>
+      <InputField field={field} />
     </Form.Item>
   );
 };

@@ -1,7 +1,18 @@
-import { Typography, Form, Upload } from 'antd';
-const { Title } = Typography;
-import { ProfilePictureUpload, FormItem } from './OnboardingFormComponents';
+import { Typography, Form, Upload, Steps, Button } from 'antd';
+import { UploadOutlined } from '@ant-design/icons';
+const { Step } = Steps;
+const { Title, Text } = Typography;
+import PageLayout from '../../components/layout/Page';
+import {
+  ProfilePictureUpload,
+  FormItem,
+  FormList,
+} from './OnboardingFormComponents';
 import { useState } from 'react';
+
+const formStyle = {
+  minHeight: '100%',
+};
 
 const usStates = [
   { value: 'AL', label: 'AL' },
@@ -111,7 +122,7 @@ const personalInfoFieldsTwo = [
         label: 'Prefer not to answer',
       },
     ],
-    onChange: () => console.log(value),
+    onChange: (value) => console.log(value),
   },
   {
     name: 'birthDate',
@@ -158,6 +169,60 @@ const addressFields = [
     type: 'input',
   },
 ];
+
+const referralAndEmergencyFields = [
+  {
+    name: 'firstName',
+    placeholder: 'First Name',
+    type: 'text',
+    rules: [
+      {
+        require: true,
+        message: 'Please enter your first name',
+      },
+    ],
+  },
+  {
+    name: 'middleName',
+    placeholder: 'Middle Name',
+    type: 'text',
+  },
+  {
+    name: 'lastName',
+    placeholder: 'Last Name',
+    type: 'text',
+    rules: [
+      {
+        require: true,
+        message: 'Please enter your last name',
+      },
+    ],
+  },
+
+  {
+    name: 'relationship',
+    placeholder: 'Relationship',
+    type: 'text',
+  },
+];
+
+const props = {
+  name: 'file',
+  action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
+  headers: {
+    authorization: 'authorization-text',
+  },
+  onChange(info) {
+    if (info.file.status !== 'uploading') {
+      console.log(info.file, info.fileList);
+    }
+    if (info.file.status === 'done') {
+      message.success(`${info.file.name} file uploaded successfully`);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} file upload failed.`);
+    }
+  },
+};
 
 export default function OnboardingForm() {
   const [citizenship, setCitizenship] = useState(null);
@@ -210,8 +275,6 @@ export default function OnboardingForm() {
       console.log(`start: ${new Date(value[0])} end: ${new Date(value[1])}`),
   };
 
-  const [form] = Form.useForm();
-
   const normFile = (e) => {
     if (Array.isArray(e)) {
       return e;
@@ -219,21 +282,11 @@ export default function OnboardingForm() {
     return e?.fileList;
   };
 
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
-  return (
-    <>
-      <Title>Onboarding Form</Title>
-      <Form
-        form={form}
-        name='onboarding-form'
-        autoComplete='off'
-        onFinish={onSubmit}
-        onSubmitCapture={(e) => e.preventDefault()}
-      >
-        {/* <div>
+  const steps = [
+    {
+      title: 'Step 1',
+      content: (
+        <div>
           <Title level={3}>Profile Picture</Title>
           <Form.Item
             name='profilePicture'
@@ -242,7 +295,12 @@ export default function OnboardingForm() {
           >
             <ProfilePictureUpload />
           </Form.Item>
-        </div> */}
+        </div>
+      ),
+    },
+    {
+      title: 'Step 2',
+      content: (
         <div>
           <Title level={3}>Personal Information</Title>
           <div className='flex'>
@@ -262,7 +320,12 @@ export default function OnboardingForm() {
             ))}
           </div>
         </div>
-        {/* <div>
+      ),
+    },
+    {
+      title: 'Step 3',
+      content: (
+        <div>
           <Title level={3}>Address</Title>
           <div className='flex'>
             {addressFields.map((field) => (
@@ -272,7 +335,12 @@ export default function OnboardingForm() {
               />
             ))}
           </div>
-        </div> */}
+        </div>
+      ),
+    },
+    {
+      title: 'Step 4',
+      content: (
         <div>
           <Title level={3}>Work Authorization</Title>
           <div className='flex'>
@@ -285,6 +353,21 @@ export default function OnboardingForm() {
                 key={workVisaField.name}
                 field={workVisaField}
               />
+            )}
+            {workVisa === 'f1' && (
+              <Form.Item
+                key='opt-receipt'
+                label='Upload your OPT Receipt'
+              >
+                <Upload {...props}>
+                  <Button
+                    icon={<UploadOutlined />}
+                    size='large'
+                  >
+                    Click to Upload your OPT receipt
+                  </Button>
+                </Upload>
+              </Form.Item>
             )}
             {workVisa === 'others' && (
               <FormItem
@@ -300,7 +383,128 @@ export default function OnboardingForm() {
             )}
           </div>
         </div>
+      ),
+    },
+    {
+      title: 'Step 5',
+      content: (
+        <div>
+          <Title level={3}>Referral</Title>
+          <FormList
+            listName='referralList'
+            inputFields={referralAndEmergencyFields}
+            isReferral={true}
+          />
+        </div>
+      ),
+    },
+    {
+      title: 'Step 6',
+      content: (
+        <div>
+          <Title level={3}>Emergency Contacts (Optional)</Title>
+          <FormList
+            listName='emergencyList'
+            inputFields={referralAndEmergencyFields}
+            isReferral={false}
+          />
+        </div>
+      ),
+    },
+    {
+      title: 'Step 7',
+      content: (
+        <div>
+          <Title level={3}>Review Application</Title>
+          <Text>Uploaded files</Text>
+        </div>
+      ),
+    },
+  ];
+
+  const [current, setCurrent] = useState(0);
+
+  const [form] = Form.useForm();
+
+  const next = () => {
+    form
+      .validateFields()
+      .then(() => {
+        setCurrent(current + 1);
+      })
+      .catch((info) => {
+        console.log('Validation Failed:', info);
+      });
+  };
+
+  const prev = () => {
+    setCurrent(current - 1);
+  };
+
+  const onSubmit = () => {
+    const values = form.getFieldsValue(true);
+
+    console.log(values);
+  };
+
+  return (
+    <PageLayout>
+      <Title>Onboarding Form</Title>
+      <Form
+        form={form}
+        layout='vertical'
+        name='onboarding-form'
+        onFinish={onSubmit}
+        onSubmitCapture={(e) => e.preventDefault()}
+        className='border-2 border-rose-400'
+        style={formStyle}
+      >
+        <div>
+          <div className='steps-content'>{steps[current].content}</div>
+
+          <div
+            className='steps-btns'
+            style={{ marginTop: 24 }}
+          >
+            {current > 0 && (
+              <Button
+                style={{ margin: '0 8px' }}
+                onClick={() => prev()}
+              >
+                Previous
+              </Button>
+            )}
+            {current < steps.length - 1 && (
+              <Button
+                type='primary'
+                onClick={() => next()}
+              >
+                Next
+              </Button>
+            )}
+            {current === steps.length - 1 && (
+              <Button
+                type='primary'
+                htmlType='submit'
+              >
+                Submit
+              </Button>
+            )}
+          </div>
+        </div>
+        <Steps
+          size='small'
+          current={current}
+          style={{ marginTop: 24 }}
+        >
+          {steps.map((item) => (
+            <Step
+              key={item.title}
+              title={item.title}
+            />
+          ))}
+        </Steps>
       </Form>
-    </>
+    </PageLayout>
   );
 }

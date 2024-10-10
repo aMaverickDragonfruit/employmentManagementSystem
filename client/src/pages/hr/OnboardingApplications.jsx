@@ -1,3 +1,11 @@
+import { Typography } from 'antd';
+import PageLayout from '../../components/layout/Page';
+const { Title } = Typography;
+
 export default function OnboardingApplications() {
-  return <h1>Onboarding Applications</h1>;
+  return (
+    <PageLayout>
+      <Title>Onboarding Applications</Title>
+    </PageLayout>
+  );
 }
