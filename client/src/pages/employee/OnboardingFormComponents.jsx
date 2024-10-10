@@ -4,11 +4,7 @@ const { RangePicker } = DatePicker;
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
-const InputLabel = ({ children }) => {
-  return <div style={{ marginTop: 8 }}>{children}</div>;
-};
-
-const UploadBtn = ({ label }) => {
+export const UploadBtn = ({ label }) => {
   return (
     <button
       style={{
@@ -26,61 +22,6 @@ const UploadBtn = ({ label }) => {
         {label}
       </div>
     </button>
-  );
-};
-
-const getBase64 = (file) =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = (error) => reject(error);
-  });
-
-export const ProfilePictureUpload = () => {
-  const [fileList, setFileList] = useState([]);
-
-  const handleChange = ({ fileList: newFileList }) => {
-    setFileList(newFileList);
-  };
-
-  const beforeUpload = (file) => {
-    // console.log(file);
-    // Optionally validate file type and size
-    const isImage = file.type.startsWith('image/');
-    if (!isImage) {
-      message.error('You can only upload image files!');
-      return Upload.LIST_IGNORE;
-    }
-    const isLt2M = file.size / 1024 / 1024 < 2;
-    if (!isLt2M) {
-      message.error('Image must be smaller than 2MB!');
-      //   return Upload.LIST_IGNORE;
-      return false;
-    }
-
-    return true;
-  };
-
-  return (
-    <div>
-      <Upload
-        action='https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload'
-        name='profilePicture'
-        listType='picture-card'
-        fileList={fileList}
-        beforeUpload={beforeUpload}
-        onChange={handleChange}
-        maxCount={1}
-      >
-        {fileList.length === 0 ? (
-          <UploadBtn label={'Upload'} />
-        ) : (
-          <UploadBtn label={'Update'} />
-        )}
-      </Upload>
-      <InputLabel>Upload Profile Picture</InputLabel>
-    </div>
   );
 };
 
@@ -142,10 +83,7 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
       {(fields, { add, remove }) => (
         <>
           {fields.map(({ key, name }) => (
-            <div
-              className='flex'
-              key={key}
-            >
+            <div className='flex' key={key}>
               {inputFields.map((field) => (
                 <Form.Item
                   label={field.placeholder}
@@ -154,10 +92,7 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
                   rules={field.rules}
                   hasFeedback
                 >
-                  <Input
-                    placeholder={field.placeholder}
-                    size='large'
-                  />
+                  <Input placeholder={field.placeholder} size='large' />
                 </Form.Item>
               ))}
 
