@@ -1,6 +1,7 @@
-import { Typography, Button, Table, Input } from 'antd';
+import { Typography, Button, Table, Input, Spin } from 'antd';
 const { Title } = Typography;
 const { Search } = Input;
+
 import { useState, useEffect } from 'react';
 import AuthFields from '../../components/auth/AuthFields';
 import AuthForm from '../../components/auth/AuthForm';
@@ -145,25 +146,20 @@ const RegistrationTable = ({ setErr, data }) => {
 
   const dispatch = useDispatch();
 
-  const handleSendReminder = (record) => {
+  const handleSendReminder = async (record) => {
     const data = {
       email: record.email,
     };
-    dispatch(createRegistration(data)).then((action) => {
-      if (createRegistration.fulfilled.match(action)) {
-        dispatch(fetchRegistrations());
-      } else if (createRegistration.rejected.match(action)) {
-        setErr(action.payload);
-      }
-    });
+    try {
+      await dispatch(createRegistration(data)).unwrap();
+
+      await dispatch(fetchRegistrations()).unwrap();
+    } catch (error) {
+      setErr(error);
+    }
   };
 
-  return (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-    />
-  );
+  return <Table dataSource={dataSource} columns={columns} />;
 };
 
 export default function EmployeeRegistration() {
@@ -179,38 +175,34 @@ export default function EmployeeRegistration() {
     dispatch(fetchRegistrations());
   }, [dispatch]);
 
-  const onSubmit = (data) => {
-    dispatch(createRegistration(data)).then((action) => {
-      if (createRegistration.fulfilled.match(action)) {
-        dispatch(fetchRegistrations());
-      } else if (createRegistration.rejected.match(action)) {
-        setErr(action.payload);
-      }
-    });
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(createRegistration(data)).unwrap();
+
+      await dispatch(fetchRegistrations()).unwrap();
+    } catch (error) {
+      setErr(error);
+    }
   };
 
   const handleInvitationClose = () => {
     setShowInvitation(false);
   };
 
-  if (loading) return <p>Loading</p>;
+  // if (loading) return <p>Loading</p>;
 
   return (
     <PageLayout>
       <Title>Employee Registrations</Title>
       <div className='mt-10 mb-4 flex justify-between'>
         <Title level={3}>Registration History</Title>
-        <Button
-          type='primary'
-          onClick={() => setShowInvitation(true)}
-        >
+        <Button type='primary' onClick={() => setShowInvitation(true)}>
           Invite Registration
         </Button>
       </div>
-      <RegistrationTable
-        setErr={setErr}
-        data={registrations}
-      />
+      <Spin spinning={loading}>
+        <RegistrationTable setErr={setErr} data={registrations} />
+      </Spin>
       {showInvitation && (
         <>
           <div className='absolute -top-1/4 left-1/4 z-50 '>

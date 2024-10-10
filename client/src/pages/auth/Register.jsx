@@ -61,14 +61,19 @@ export default function Register() {
 
   // console.log(registerToken);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const credentials = {
       userName: data.userName,
       password: data.password,
       registerToken,
     };
     // console.log(credentials);
-    dispatch(signupUser(credentials));
+    try {
+      await dispatch(signupUser(credentials)).unwrap();
+      navigate('/login');
+    } catch (err) {
+      setErr(err);
+    }
   };
 
   const onClose = () => {

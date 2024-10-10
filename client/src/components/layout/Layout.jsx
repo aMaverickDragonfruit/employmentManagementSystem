@@ -25,6 +25,7 @@ export default function MainLayout() {
   const { user, isAuthenticated, loading, error } = useSelector(
     (state) => state.userSlice
   );
+  
 
   return (
     <ConfigProvider
@@ -38,7 +39,7 @@ export default function MainLayout() {
         {/* <Header style={headerStyle}>Header</Header> */}
         <Navbar />
         <Layout>
-          {user && isAuthenticated ? <Sider isHR={user.isHR} /> : <></>}
+          {user && isAuthenticated ? <Sider isHR={user.isHR} /> : null}
           <Content>{currentPath === '/' ? <Home /> : <Outlet />}</Content>
         </Layout>
         <Footer />
