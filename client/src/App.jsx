@@ -12,6 +12,7 @@ import UpdatePassword from './pages/auth/UpdatePassword';
 import Styles from './pages/Styles';
 import PasswordUpdated from './pages/auth/PasswordUpdated';
 import OnboardingApplications from './pages/hr/OnboardingApplications';
+import Testing from './pages/Testing';
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
               path='onboarding-applications'
               element={<OnboardingApplications />}
             />
+            <Route path='testing' element={<Testing />} />
           </Route>
           <Route path='/styles' element={<Styles />} />
         </Routes>

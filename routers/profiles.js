@@ -5,6 +5,7 @@ import {
   getProfileById,
   getProfileByUserId,
   updateProfileById,
+  updateCurUserProfile,
   updateProfileByUserId,
 } from '../controllers/profiles.js';
 import { verifyLoginToken, checkHR } from '../middlewares/auth.js';
@@ -38,6 +39,13 @@ router.get('/:id', getProfileById);
  * @access Public
  */
 router.get('/users/:id', getProfileByUserId);
+
+/**
+ * @route PUT /api/profiles/me
+ * @desc Update a profile by current user ID
+ * @access Private User
+ */
+router.put('/me', verifyLoginToken, updateCurUserProfile);
 
 /**
  * @route PUT /api/profiles/:id
