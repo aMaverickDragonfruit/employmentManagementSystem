@@ -6,7 +6,7 @@ const contactSchema = new Schema(
     middleName: { type: String },
     lastName: { type: String, required: true },
     phone: { type: String, required: true },
-    relationShip: { type: String, required: true },
+    relationship: { type: String, required: true },
   },
   { timestamps: true }
 );
@@ -21,7 +21,7 @@ const status = new Set(['Pending', 'Approved', 'Rejected']);
 const documentSchema = new Schema(
   {
     fileName: { type: String },
-    file: { type: Buffer },
+    file: { type: String },
     status: {
       type: String,
       default: 'Pending',
@@ -92,6 +92,9 @@ const ProfileSchema = new Schema({
     type: String,
   },
   workPhone: {
+    type: String,
+  },
+  citizenship: {
     type: String,
   },
   workAuthType: {
