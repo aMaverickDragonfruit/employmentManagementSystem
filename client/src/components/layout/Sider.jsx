@@ -19,6 +19,7 @@ const siderStyle = {
   backgroundColor: '#fff',
   display: 'flex',
   flexDirection: 'column',
+  minHeight: '100%',
   justifyContent: 'space-between',
 };
 
