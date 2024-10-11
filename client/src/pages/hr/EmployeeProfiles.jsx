@@ -44,20 +44,16 @@ const ProfilesTable = ({ data }) => {
   const dataSource = data.map((element) => {
     return {
       key: element._id,
-      name: element.lastName,
-      ssn: element.ssn || 'None',
-      workAuthorization: element.workAuthType,
-      phone: element.cellPhone || 'None',
+      name: element.firstName + ' ' + element.lastName,
+      ssn: element.ssn || 'N/A',
+      workAuthorization:
+        element.workAuthType === 'None' ? 'N/A' : element.workAuthType,
+      phone: element.cellPhone || 'N/A',
       email: element.email,
     };
   });
 
-  return (
-    <Table
-      dataSource={dataSource}
-      columns={columns}
-    />
-  );
+  return <Table dataSource={dataSource} columns={columns} />;
 };
 
 export default function EmployeeProfiles() {
