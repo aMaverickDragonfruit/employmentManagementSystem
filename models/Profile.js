@@ -114,7 +114,7 @@ const ProfileSchema = new Schema({
     type: [documentSchema],
     default: [
       { fileType: 'profilePicture', status: 'Approved' },
-      { fileType: 'diverLicense', status: 'Approved' },
+      { fileType: 'driverLicense', status: 'Approved' },
       { fileType: 'optReceipt', status: 'Pending' },
       { fileType: 'i983', status: 'Pending' },
       { fileType: 'optEAD', status: 'Pending' },
