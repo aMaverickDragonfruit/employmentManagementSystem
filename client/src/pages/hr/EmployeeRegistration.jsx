@@ -159,7 +159,12 @@ const RegistrationTable = ({ setErr, data }) => {
     }
   };
 
-  return <Table dataSource={dataSource} columns={columns} />;
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+    />
+  );
 };
 
 export default function EmployeeRegistration() {
@@ -196,16 +201,22 @@ export default function EmployeeRegistration() {
       <Title>Employee Registrations</Title>
       <div className='mt-10 mb-4 flex justify-between'>
         <Title level={3}>Registration History</Title>
-        <Button type='primary' onClick={() => setShowInvitation(true)}>
+        <Button
+          type='primary'
+          onClick={() => setShowInvitation(true)}
+        >
           Invite Registration
         </Button>
       </div>
       <Spin spinning={loading}>
-        <RegistrationTable setErr={setErr} data={registrations} />
+        <RegistrationTable
+          setErr={setErr}
+          data={registrations}
+        />
       </Spin>
       {showInvitation && (
         <>
-          <div className='absolute -top-1/4 left-1/4 z-50 '>
+          <div className='absolute -top-1/4 left-1/4 z-50 transform -translate-x-1/2 -translate-y-1/2'>
             <InvitationForm
               onSubmit={onSubmit}
               onClose={handleInvitationClose}
