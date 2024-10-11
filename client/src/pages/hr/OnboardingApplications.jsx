@@ -1,6 +1,9 @@
 import { Typography, Table } from 'antd';
 import PageLayout from '../../components/layout/Page';
 const { Title } = Typography;
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProfiles } from '../../features/profileSlice';
+import { useEffect } from 'react';
 
 const OnboardingApplicationsTable = ({ data }) => {
   const columns = [
@@ -8,9 +11,7 @@ const OnboardingApplicationsTable = ({ data }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (_, { record }) => (
-        <Typography.Link>{record.name}</Typography.Link>
-      ),
+      render: (_, record) => <Typography.Link>{record.name}</Typography.Link>,
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
@@ -40,21 +41,33 @@ const OnboardingApplicationsTable = ({ data }) => {
     },
   ];
 
-  const sourceData = data;
+  const dataSource = data.map((profile) => {
+    return {
+      key: profile._id,
+      userId: profile.user,
+      name: profile.firstName + ' ' + profile.lastName,
+      email: profile.email,
+      status: profile.status === 'New' ? 'Pending' : profile.status,
+    };
+  });
 
-  return (
-    <Table
-      columns={columns}
-      sourceData={sourceData}
-    ></Table>
-  );
+  return <Table columns={columns} dataSource={dataSource}></Table>;
 };
 
 export default function OnboardingApplications() {
+  const dispatch = useDispatch();
+  const { profiles, curProfile, loading, error } = useSelector(
+    (state) => state.profileSlice
+  );
+
+  useEffect(() => {
+    dispatch(fetchProfiles());
+  }, [dispatch]);
+
   return (
     <PageLayout>
       <Title>Onboarding Applications</Title>
-      <OnboardingApplicationsTable data={[]} />
+      <OnboardingApplicationsTable data={profiles} />
     </PageLayout>
   );
 }
