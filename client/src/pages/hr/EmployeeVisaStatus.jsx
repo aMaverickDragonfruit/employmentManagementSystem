@@ -76,10 +76,7 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
           label = 'View Document';
         // wait for complete the link
         return (
-          <Button
-            type='link'
-            onClick={() => handleViewDoc(profileId)}
-          >
+          <Button type='link' onClick={() => handleViewDoc(profileId)}>
             View Documents
           </Button>
         );
@@ -108,6 +105,27 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
         break; // No need to check further if any document is rejected
       } else if (doc.status === 'Pending') {
         hasPending = true; // Mark that there's at least one pending document
+      }
+    }
+    // If no rejection but at least one pending, set status to 'Pending'
+
+    if (status !== 'Rejected' && hasPending) {
+      status = 'Pending';
+    }
+    // Handle cases where required documents are missing
+    if (requiredDocuments.length === 0) {
+      // No required documents uploaded yet
+      status = 'Rejected';
+    } else {
+      // Check if all required documents are uploaded
+      const uploadedDocTypes = requiredDocuments.map((doc) => doc.fileType);
+      const allDocsUploaded = requiredDocTypes.every((type) =>
+        uploadedDocTypes.includes(type)
+      );
+
+      if (!allDocsUploaded && status === 'Approved') {
+        // If some required documents are missing and no rejections or pendings
+        status = 'Rejected';
       }
     }
 
