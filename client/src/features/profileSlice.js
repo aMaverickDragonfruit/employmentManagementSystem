@@ -12,6 +12,7 @@ import {
 const initialState = {
   profiles: [],
   curProfile: {},
+  selectedProfile: {},
   loading: false,
   error: null,
 };
@@ -159,7 +160,7 @@ const profileSlice = createSlice({
       .addCase(fetchProfileById.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.curProfile = action.payload;
+        state.selectedProfile = action.payload;
       })
       .addCase(fetchProfileById.rejected, (state, action) => {
         state.loading = false;
@@ -173,7 +174,7 @@ const profileSlice = createSlice({
       .addCase(fetchProfileByUserId.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.curProfile = action.payload;
+        state.selectedProfile = action.payload;
       })
       .addCase(fetchProfileByUserId.rejected, (state, action) => {
         state.loading = false;
@@ -201,7 +202,7 @@ const profileSlice = createSlice({
       .addCase(updateProfileById.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.curProfile = action.payload;
+        state.selectedProfile = action.payload;
       })
       .addCase(updateProfileById.rejected, (state, action) => {
         state.loading = false;
@@ -215,7 +216,7 @@ const profileSlice = createSlice({
       .addCase(updateProfileByUserId.fulfilled, (state, action) => {
         state.loading = false;
         state.error = null;
-        state.curProfile = action.payload;
+        state.selectedProfile = action.payload;
       })
       .addCase(updateProfileByUserId.rejected, (state, action) => {
         state.loading = false;
