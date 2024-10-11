@@ -90,20 +90,20 @@ export default function OnboardingForm() {
         initialValues.profilePicture = [
           {
             uid: curProfile.documents[0].uid || '-1',
-            name: curProfile.documents[0].name || 'profile.png',
-            response: { url: curProfile.documents[0].file || '' },
+            name: curProfile.documents[0].fileName || 'profile.png',
+            response: { url: curProfile.documents[0].fileUrl || '' },
             status: 'done',
-            url: curProfile.documents[0].file || '',
+            url: curProfile.documents[0].fileUrl || '',
           },
         ];
         initialValues.optReceipt = [
           {
-            uid: curProfile.documents[1].uid || '-2',
-            name: curProfile.documents[1].name || 'OPT-Receipt.pdf',
-            response: { url: curProfile.documents[1].file || '' },
+            uid: curProfile.documents[2].uid || '-2',
+            name: curProfile.documents[2].fileName || 'OPT-Receipt.pdf',
+            response: { url: curProfile.documents[2].fileUrl || '' },
 
             status: 'done',
-            url: curProfile.documents[1].file || '',
+            url: curProfile.documents[2].fileUrl || '',
           },
         ];
       }
@@ -482,10 +482,25 @@ export default function OnboardingForm() {
     const newStartDate = new Date(workAuthDuration[0]);
     const newEndDate = new Date(workAuthDuration[1]);
     const profileLink = profilePicture?.[0]?.response.url;
-    const profileFile = { fileName: 'profilePicture', file: profileLink };
+    const profileName = profilePicture?.[0]?.name;
+    const profileFile = {
+      fileType: 'profilePicture',
+      fileName: profileName,
+      fileUrl: profileLink,
+      status: 'Approved',
+    };
     const optLink = optReceipt[0].response.url;
-    const optFile = { fileName: 'optReceipt', file: optLink };
-    const newDocuments = [profileFile, optFile];
+    const optFileName = optReceipt[0].name;
+    const optFile = {
+      fileType: 'optReceipt',
+      fileName: optFileName,
+      fileUrl: optLink,
+    };
+    const newDocuments = [
+      profileFile,
+      { fileType: 'diverLicense', status: 'Approved' },
+      optFile,
+    ];
 
     const data = {
       ...rest,
