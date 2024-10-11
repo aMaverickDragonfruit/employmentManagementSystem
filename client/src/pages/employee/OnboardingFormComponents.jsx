@@ -1,8 +1,8 @@
-import { Upload, message, Form, Input, Select, DatePicker, Button } from 'antd';
+import { Typography, Form, Input, Select, DatePicker, Button } from 'antd';
 const { RangePicker } = DatePicker;
+const { Title } = Typography;
 
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import { useState } from 'react';
 
 const usStates = [
   { value: 'AL', label: 'AL' },
@@ -111,12 +111,6 @@ export const personalInfoFieldsTwo = [
       {
         value: 'none',
         label: 'Prefer not to answer',
-      },
-    ],
-    rules: [
-      {
-        required: true,
-        message: 'Please select your gender',
       },
     ],
     onChange: (value) => console.log(value),
@@ -342,8 +336,25 @@ const InputField = ({ field, value, onChange }) => {
 
 export const FormList = ({ listName, inputFields, isReferral }) => {
   return (
-    <Form.List name={listName}>
-      {(fields, { add, remove }) => (
+    <Form.List
+      name={listName}
+      rules={
+        !isReferral
+          ? [
+              {
+                validator: async (_, names) => {
+                  if (!names || names.length < 1) {
+                    return Promise.reject(
+                      new Error('At least one emergency contact is required')
+                    );
+                  }
+                },
+              },
+            ]
+          : []
+      }
+    >
+      {(fields, { add, remove }, { errors }) => (
         <>
           {fields.map(({ key, name }) => (
             <div
@@ -356,7 +367,6 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
                   key={field.name}
                   name={[name, field.name]}
                   rules={field.rules}
-                  hasFeedback
                 >
                   <Input
                     placeholder={field.placeholder}
@@ -390,6 +400,7 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
                 Add
               </Button>
             )}
+            <Form.ErrorList errors={errors} />
           </Form.Item>
         </>
       )}
@@ -404,11 +415,20 @@ export const FormItem = ({ field }) => {
       name={field.name}
       rules={field.rules}
       dependencies={field.dependencies}
-      hasFeedback
+
       // width='10'
       // className='border-2 border-rose-500'
     >
       <InputField field={field} />
     </Form.Item>
+  );
+};
+
+export const TitleAndEdit = ({ title, handleClick }) => {
+  return (
+    <div className='min-w-full flex justify-between mt-4'>
+      <Title level={3}>{title}</Title>
+      <Button onClick={handleClick}>Edit</Button>
+    </div>
   );
 };

@@ -1,12 +1,13 @@
-import { Table, Typography, Tag } from 'antd';
+import { Table, Typography, Tag, Button } from 'antd';
 import PageLayout from '../../components/layout/Page';
 const { Title } = Typography;
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfiles } from '../../features/profileSlice';
-import { useEffect } from 'react';
+import { fetchProfileById, fetchProfiles } from '../../features/profileSlice';
+import { useEffect, useState } from 'react';
+import { ReviewFiles } from './EmployeeVisaStatusComponents';
 import dayjs from 'dayjs';
 
-const EmployeeVisaStatusTable = ({ data }) => {
+const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
   const columns = [
     {
       title: 'Name',
@@ -69,17 +70,18 @@ const EmployeeVisaStatusTable = ({ data }) => {
       dataIdex: 'action',
       key: 'action',
       sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (_, { status, userId }) => {
+      render: (_, { status, key: profileId }) => {
         let label = 'Send Notification';
         if (status === 'Pending' || status === 'Approved')
           label = 'View Document';
         // wait for complete the link
         return (
-          <Typography.Link
-            href={`http://localhost:3001/profiles/users/${userId}`}
+          <Button
+            type='link'
+            onClick={() => handleViewDoc(profileId)}
           >
-            {label}
-          </Typography.Link>
+            View Documents
+          </Button>
         );
       },
     },
@@ -109,28 +111,6 @@ const EmployeeVisaStatusTable = ({ data }) => {
       }
     }
 
-    // If no rejection but at least one pending, set status to 'Pending'
-    if (status !== 'Rejected' && hasPending) {
-      status = 'Pending';
-    }
-
-    // Handle cases where required documents are missing
-    if (requiredDocuments.length === 0) {
-      // No required documents uploaded yet
-      status = 'Rejected';
-    } else {
-      // Check if all required documents are uploaded
-      const uploadedDocTypes = requiredDocuments.map((doc) => doc.fileType);
-      const allDocsUploaded = requiredDocTypes.every((type) =>
-        uploadedDocTypes.includes(type)
-      );
-
-      if (!allDocsUploaded && status === 'Approved') {
-        // If some required documents are missing and no rejections or pendings
-        status = 'Rejected';
-      }
-    }
-
     return {
       key: profile._id,
       userId: profile.user,
@@ -157,10 +137,36 @@ export default function EmployeeVisaStatus() {
     dispatch(fetchProfiles());
   }, [dispatch]);
 
+  const [isViewDoc, setIsViewDoc] = useState(false);
+
+  const handleOpenDocuments = (profileId) => {
+    console.log(profileId);
+    dispatch(fetchProfileById(profileId));
+    setIsViewDoc(true);
+  };
+
+  const handleCloseDocuments = () => {
+    setIsViewDoc(false);
+  };
+
   return (
     <PageLayout>
       <Title>Employee Visa Status</Title>
-      <EmployeeVisaStatusTable data={profiles} />
+      <EmployeeVisaStatusTable
+        data={profiles}
+        handleViewDoc={(profileId) => handleOpenDocuments(profileId)}
+      />
+      {isViewDoc && (
+        <>
+          <div className='absolute top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2'>
+            <ReviewFiles handleClose={handleCloseDocuments} />
+          </div>
+          <div
+            className='fixed inset-0 bg-slate-500 bg-opacity-50 z-40'
+            onClick={handleCloseDocuments}
+          ></div>
+        </>
+      )}
     </PageLayout>
   );
 }

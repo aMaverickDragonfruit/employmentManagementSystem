@@ -28,6 +28,7 @@ import {
   updateCurUserProfile,
 } from '../../features/profileSlice';
 import dayjs from 'dayjs';
+import { commonInputProps } from './ProfileComponents';
 
 const formStyle = {
   minHeight: '560px',
@@ -296,6 +297,27 @@ export default function OnboardingForm() {
             {personalInfoFieldsTwo.map((field) => (
               <FormItem key={field.name} field={field} />
             ))}
+            <Form.Item
+              label='Upload Driver License'
+              name='driverLicense'
+              valuePropName='fileList'
+              getValueFromEvent={normFile}
+              rules={[
+                {
+                  required: true,
+                  message: 'Please upload Driver License',
+                },
+              ]}
+            >
+              <Upload {...uploadProps}>
+                <Button
+                  icon={<UploadOutlined />}
+                  {...commonInputProps}
+                >
+                  Click to Upload
+                </Button>
+              </Upload>
+            </Form.Item>
           </div>
         </div>
       ),

@@ -1,9 +1,10 @@
 import { Table, Typography } from 'antd';
+const { Title } = Typography;
 import PageLayout from '../../components/layout/Page';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
 import { useEffect } from 'react';
-const { Title } = Typography;
+import Search from '../../components/components';
 
 const ProfilesTable = ({ data }) => {
   const columns = [
@@ -68,9 +69,14 @@ export default function EmployeeProfiles() {
     dispatch(fetchProfiles());
   }, [dispatch]);
 
+  const onSearch = (value) => {
+    console.log(value);
+  };
+
   return (
     <PageLayout>
       <Title>Employee Profiles</Title>
+      <Search onSearch={onSearch} />
       <ProfilesTable data={profiles} />
     </PageLayout>
   );

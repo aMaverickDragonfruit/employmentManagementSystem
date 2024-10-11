@@ -3,16 +3,17 @@ const { Content } = Layout;
 import Footer from './Footer';
 import Home from '../../pages/Home';
 import Navbar from './Navbar';
-import Sider from './Sider';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import userSlice from '../../features/userSlice';
+import AppMenu from './Menu';
 
 const layoutStyle = {
+  position: 'relative',
   overflow: 'hidden',
   width: '100%',
-  height: '100vh',
+  minHeight: '100vh',
 };
 
 export default function MainLayout() {
@@ -35,16 +36,21 @@ export default function MainLayout() {
       }}
     >
       <Layout style={layoutStyle}>
-        {/* <Header style={headerStyle}>Header</Header> */}
-        <Navbar />
-        <Layout>
-          {user && isAuthenticated ? <Sider isHR={user.isHR} /> : null}
-          <Content style={{ height: '100%' }}>
-            {currentPath === '/' ? <Home /> : <Outlet />}
-          </Content>
-        </Layout>
+        <div className='app-header fixed top-0 w-full z-50'>
+          <Navbar />
+          {user && isAuthenticated ? <AppMenu isHR={user.isHR} /> : null}
+        </div>
+        <Content
+          style={{
+            height: '100%',
+            marginTop: '8%',
+            display: 'flex',
+            justifyContent: 'center',
+          }}
+        >
+          {currentPath === '/' ? <Home /> : <Outlet />}
+        </Content>
         <Footer />
-        {/* <Footer style={footerStyle}>Footer</Footer> */}
       </Layout>
     </ConfigProvider>
   );

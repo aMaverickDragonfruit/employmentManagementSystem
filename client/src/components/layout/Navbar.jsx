@@ -3,6 +3,7 @@ import { Typography, Layout, Badge, Avatar, Dropdown } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
 import { clearUser } from '../../features/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import AppMenu from './Menu';
 
 const { Header } = Layout;
 const { Text } = Typography;
@@ -24,7 +25,10 @@ const menuStyle = {};
 
 const Logo = ({ handleClick, className }) => {
   return (
-    <div className={`w-fit cursor-pointer ${className}`} onClick={handleClick}>
+    <div
+      className={`w-fit cursor-pointer ${className}`}
+      onClick={handleClick}
+    >
       <span className='text-xl font-bold'>
         {/* Display on large screens */}
         <span className='hidden lg:inline'>Management</span>
@@ -70,13 +74,19 @@ const User = () => {
     return (
       <div className='flex items-center'>
         {user.isHR ? (
-          <Badge count={'HR'} size='small'>
+          <Badge
+            count={'HR'}
+            size='small'
+          >
             <UserAvatar />
           </Badge>
         ) : (
           <UserAvatar />
         )}
-        <Dropdown menu={{ items: menuItems }} placement='bottomRight'>
+        <Dropdown
+          menu={{ items: menuItems }}
+          placement='bottomRight'
+        >
           <Text style={textStyle}>{user.firstName}</Text>
         </Dropdown>
       </div>
@@ -85,7 +95,10 @@ const User = () => {
   return (
     <div>
       <UserAvatar />
-      <Text style={textStyle} onClick={() => navigate('/login')}>
+      <Text
+        style={textStyle}
+        onClick={() => navigate('/login')}
+      >
         Log in
       </Text>
     </div>
