@@ -16,21 +16,16 @@ const referenceSchema = new Schema({
   email: { type: String, required: true },
 });
 
-const status = new Set(['Pending', 'Approved', 'Rejected']);
-//Buffer : <base64 encoded PDF file or binary data>
+// const status = new Set(['Pending', 'Approved', 'Rejected']);
+
 const documentSchema = new Schema(
   {
+    fileType: { type: String, required: true },
     fileName: { type: String },
-    file: { type: String },
+    fileUrl: { type: String, required: true },
     status: {
       type: String,
       default: 'Pending',
-      validate: {
-        validator: function (value) {
-          return status.has(value);
-        },
-        message: (props) => `${props.value} is not a valid status!`,
-      },
     },
   },
   { timestamps: true }
@@ -41,6 +36,10 @@ const ProfileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true,
+  },
+  status: {
+    type: String,
+    default: 'New',
   },
   firstName: {
     type: String,
@@ -111,7 +110,16 @@ const ProfileSchema = new Schema({
   },
   reference: referenceSchema,
   emergencyContacts: [contactSchema],
-  documents: [documentSchema],
+  documents: {
+    type: [documentSchema],
+    default: [
+      { fileType: 'profilePicture', status: 'Approved' },
+      { fileType: 'diverLicense', status: 'Approved' },
+      { fileType: 'optReceipt', status: 'Pending' },
+      { fileType: 'i983', status: 'Pending' },
+      { fileType: 'optEAD', status: 'Pending' },
+    ],
+  },
 });
 
 ProfileSchema.pre('save', function (next) {

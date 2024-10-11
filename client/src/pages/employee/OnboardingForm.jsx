@@ -12,7 +12,15 @@ import { UploadOutlined } from '@ant-design/icons';
 const { Step } = Steps;
 const { Title, Text } = Typography;
 import PageLayout from '../../components/layout/Page';
-import { FormItem, FormList, UploadBtn } from './OnboardingFormComponents';
+import {
+  FormItem,
+  FormList,
+  UploadBtn,
+  personalInfoFieldsOne,
+  personalInfoFieldsTwo,
+  addressFields,
+  referralAndEmergencyFields,
+} from './OnboardingFormComponents';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -22,228 +30,11 @@ import {
 import dayjs from 'dayjs';
 
 const formStyle = {
-  minHeight: '100%',
+  minHeight: '560px',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
 };
-
-const usStates = [
-  { value: 'AL', label: 'AL' },
-  { value: 'AK', label: 'AK' },
-  { value: 'AZ', label: 'AZ' },
-  { value: 'AR', label: 'AR' },
-  { value: 'CA', label: 'CA' },
-  { value: 'CO', label: 'CO' },
-  { value: 'CT', label: 'CT' },
-  { value: 'DE', label: 'DE' },
-  { value: 'FL', label: 'FL' },
-  { value: 'GA', label: 'GA' },
-  { value: 'HI', label: 'HI' },
-  { value: 'ID', label: 'ID' },
-  { value: 'IL', label: 'IL' },
-  { value: 'IN', label: 'IN' },
-  { value: 'IA', label: 'IA' },
-  { value: 'KS', label: 'KS' },
-  { value: 'KY', label: 'KY' },
-  { value: 'LA', label: 'LA' },
-  { value: 'ME', label: 'ME' },
-  { value: 'MD', label: 'MD' },
-  { value: 'MA', label: 'MA' },
-  { value: 'MI', label: 'MI' },
-  { value: 'MN', label: 'MN' },
-  { value: 'MS', label: 'MS' },
-  { value: 'MO', label: 'MO' },
-  { value: 'MT', label: 'MT' },
-  { value: 'NE', label: 'NE' },
-  { value: 'NV', label: 'NV' },
-  { value: 'NH', label: 'NH' },
-  { value: 'NJ', label: 'NJ' },
-  { value: 'NM', label: 'NM' },
-  { value: 'NY', label: 'NY' },
-  { value: 'NC', label: 'NC' },
-  { value: 'ND', label: 'ND' },
-  { value: 'OH', label: 'OH' },
-  { value: 'OK', label: 'OK' },
-  { value: 'OR', label: 'OR' },
-  { value: 'PA', label: 'PA' },
-  { value: 'RI', label: 'RI' },
-  { value: 'SC', label: 'SC' },
-  { value: 'SD', label: 'SD' },
-  { value: 'TN', label: 'TN' },
-  { value: 'TX', label: 'TX' },
-  { value: 'UT', label: 'UT' },
-  { value: 'VT', label: 'VT' },
-  { value: 'VA', label: 'VA' },
-  { value: 'WA', label: 'WA' },
-  { value: 'WV', label: 'WV' },
-  { value: 'WI', label: 'WI' },
-  { value: 'WY', label: 'WY' },
-];
-
-const personalInfoFieldsOne = [
-  {
-    name: 'firstName',
-    placeholder: 'First Name',
-    type: 'text',
-    rules: [
-      {
-        require: true,
-        message: 'Please enter your first name',
-      },
-    ],
-  },
-  {
-    name: 'middleName',
-    placeholder: 'Middle Name',
-    type: 'text',
-  },
-  {
-    name: 'lastName',
-    placeholder: 'Last Name',
-    type: 'text',
-    rules: [
-      {
-        require: true,
-        message: 'Please enter your last name',
-      },
-    ],
-  },
-
-  {
-    name: 'preferredName',
-    placeholder: 'Preferred Name',
-    type: 'text',
-  },
-];
-
-const personalInfoFieldsTwo = [
-  {
-    name: 'gender',
-    placeholder: 'Gender',
-    type: 'select',
-    options: [
-      {
-        value: 'male',
-        label: 'Male',
-      },
-      {
-        value: 'female',
-        label: 'Female',
-      },
-      {
-        value: 'none',
-        label: 'Prefer not to answer',
-      },
-    ],
-    rules: [
-      {
-        require: true,
-        message: 'Please select your gender',
-      },
-    ],
-    onChange: (value) => console.log(value),
-  },
-  {
-    name: 'dateOfBirth',
-    placeholder: 'Date of Birth',
-    type: 'datePicker',
-
-    onChange: (date, dateString) => {
-      console.log(date, dateString);
-    },
-  },
-  {
-    name: 'ssn',
-    placeholder: 'SSN',
-    type: 'input',
-    rules: [
-      {
-        require: true,
-        message: 'Please enter your ssn',
-      },
-    ],
-  },
-];
-
-const addressFields = [
-  {
-    name: 'addressOne',
-    placeholder: 'Street Address',
-    type: 'input',
-  },
-  {
-    name: 'addressTwo',
-    placeholder: 'Street Address Line 2',
-    type: 'input',
-  },
-  {
-    name: 'city',
-    placeholder: 'City',
-    type: 'input',
-  },
-  {
-    name: 'state',
-    placeholder: 'State',
-    type: 'select',
-    options: usStates,
-    onChange: (value) => console.log(value),
-    onSearch: (value) => console.log(`search: ${value}`),
-  },
-  {
-    name: 'zipCode',
-    placeholder: 'Zip Code',
-    type: 'input',
-  },
-];
-
-const referralAndEmergencyFields = [
-  {
-    name: 'firstName',
-    placeholder: 'First Name',
-    type: 'text',
-    rules: [
-      {
-        require: true,
-        message: 'Please enter your first name',
-      },
-    ],
-  },
-  {
-    name: 'middleName',
-    placeholder: 'Middle Name',
-    type: 'text',
-  },
-  {
-    name: 'lastName',
-    placeholder: 'Last Name',
-    type: 'text',
-    rules: [
-      {
-        require: true,
-        message: 'Please enter your last name',
-      },
-    ],
-  },
-  {
-    name: 'phone',
-    placeholder: 'Phone',
-    type: 'text',
-    rules: [
-      {
-        require: true,
-        message: 'Please enter the phone number',
-      },
-    ],
-  },
-  {
-    name: 'relationship',
-    placeholder: 'Relationship',
-    type: 'text',
-  },
-  {
-    name: 'email',
-    placeholder: 'Email',
-    type: 'text',
-  },
-];
 
 export default function OnboardingForm() {
   const [form] = Form.useForm();
@@ -257,57 +48,68 @@ export default function OnboardingForm() {
   }, [dispatch]);
 
   const prepareInitialValues = (curProfile) => {
-    const initialValues = {
-      email: curProfile.email,
-      firstName: curProfile.firstName,
-      middleName: curProfile.middleName || '',
-      lastName: curProfile.lastName,
-      preferredName: curProfile.preferredName || '',
-      gender: curProfile.gender || '',
-      dateOfBirth: dayjs(curProfile.dateOfBirth),
-      ssn: curProfile.ssn || '',
-      cellPhone: curProfile.cellPhone || '',
-      addressOne: curProfile.addressOne || '',
-      addressTwo: curProfile.addressTwo || '',
-      city: curProfile.city || '',
-      state: curProfile.state || '',
-      zipCode: curProfile.zipCode || '',
-      citizenship: curProfile.citizenship || '',
-      workAuthType: curProfile.workAuthType || '',
-      workAuthDuration: [
-        dayjs(curProfile.workAuthStartDate),
-        dayjs(curProfile.workAuthEndDate),
-      ],
-      reference: curProfile.reference ? [curProfile.reference] : [],
-      emergencyContacts: curProfile.emergencyContacts
-        ? curProfile.emergencyContacts.map((contact) => ({
-            ...contact,
-          }))
-        : [],
-    };
+    let initialValues = {};
+    if (curProfile.status === 'New') {
+      initialValues = {
+        email: curProfile.email,
+        firstName: curProfile.firstName,
+        middleName: curProfile.middleName || '',
+        lastName: curProfile.lastName,
+      };
+    } else {
+      initialValues = {
+        email: curProfile.email,
+        firstName: curProfile.firstName,
+        middleName: curProfile.middleName || '',
+        lastName: curProfile.lastName,
+        preferredName: curProfile.preferredName || '',
+        gender: curProfile.gender || '',
+        dateOfBirth: dayjs(curProfile.dateOfBirth),
+        ssn: curProfile.ssn || '',
+        cellPhone: curProfile.cellPhone || '',
+        addressOne: curProfile.addressOne || '',
+        addressTwo: curProfile.addressTwo || '',
+        city: curProfile.city || '',
+        state: curProfile.state || '',
+        zipCode: curProfile.zipCode || '',
+        citizenship: curProfile.citizenship || '',
+        workAuthType: curProfile.workAuthType || null,
+        workAuthDuration: [
+          dayjs(curProfile.workAuthStartDate),
+          dayjs(curProfile.workAuthEndDate),
+        ],
+        reference: curProfile.reference ? [curProfile.reference] : [],
+        emergencyContacts: curProfile.emergencyContacts
+          ? curProfile.emergencyContacts.map((contact) => ({
+              ...contact,
+            }))
+          : [],
+      };
 
-    if (curProfile.documents && curProfile.documents.length > 0) {
-      initialValues.profilePicture = [
-        {
-          uid: curProfile.documents[0].uid || '-1',
-          name: curProfile.documents[0].name || 'image.png',
-          response: { url: curProfile.documents[0].file || '' },
-          status: 'done',
-          url: curProfile.documents[0].file || '',
-        },
-      ];
-      initialValues.optReceipt = [
-        {
-          uid: curProfile.documents[1].uid || '-2',
-          name: curProfile.documents[1].name || 'image.png',
-          response: { url: curProfile.documents[1].file || '' },
+      if (curProfile.documents && curProfile.documents.length > 0) {
+        initialValues.profilePicture = [
+          {
+            uid: curProfile.documents[0].uid || '-1',
+            name: curProfile.documents[0].fileName || 'profile.png',
+            response: { url: curProfile.documents[0].fileUrl || '' },
+            status: 'done',
+            url: curProfile.documents[0].fileUrl || '',
+          },
+        ];
+        initialValues.optReceipt = [
+          {
+            uid: curProfile.documents[2].uid || '-2',
+            name: curProfile.documents[2].fileName || 'OPT-Receipt.pdf',
+            response: { url: curProfile.documents[2].fileUrl || '' },
 
-          status: 'done',
-          url: curProfile.documents[1].file || '',
-        },
-      ];
+            status: 'done',
+            url: curProfile.documents[2].fileUrl || '',
+          },
+        ];
+      }
     }
 
+    console.log(initialValues);
     return initialValues;
   };
 
@@ -317,46 +119,6 @@ export default function OnboardingForm() {
       setWorkVisa(curProfile.workAuthType);
       const initialValues = prepareInitialValues(curProfile);
       form.setFieldsValue(initialValues);
-
-      // form.setFieldsValue({
-      //   email: curProfile.email,
-      //   firstName: curProfile.firstName,
-      //   middleName: curProfile.middleName || '',
-      //   lastName: curProfile.lastName,
-      //   preferredName: curProfile.preferredName || '',
-      //   gender: curProfile.gender,
-      //   dateOfBirth: dayjs(curProfile.dateOfBirth),
-      //   ssn: curProfile.ssn,
-      //   cellPhone: curProfile.cellPhone,
-      //   addressOne: curProfile.addressOne,
-      //   addressTwo: curProfile.addressTwo,
-      //   city: curProfile.city,
-      //   state: curProfile.state,
-      //   zipCode: curProfile.zipCode,
-      //   citizenship: curProfile.citizenship,
-      //   workAuthType: curProfile.workAuthType,
-      //   optReceipt: [
-      //     curProfile.documents.length > 0
-      //       ? {
-      //           uid: '1',
-      //           name: 'OPT-Receipt.pdf',
-      //           status: 'done',
-      //           response: { url: curProfile.documents?.[1]?.file ?? '' },
-      //           url: curProfile.documents?.[1]?.file ?? '',
-      //         }
-      //       : {},
-      //   ],
-      //   workAuthDuration: [
-      //     dayjs(curProfile.workAuthStartDate),
-      //     dayjs(curProfile.workAuthEndDate),
-      //   ],
-      //   reference: curProfile.reference ? [curProfile.reference] : [],
-      //   emergencyContacts: curProfile.emergencyContacts
-      //     ? curProfile.emergencyContacts.map((contact) => ({
-      //         ...contact,
-      //       }))
-      //     : [],
-      // });
     }
   }, [curProfile, form]);
 
@@ -398,6 +160,12 @@ export default function OnboardingForm() {
         label: 'Others',
       },
     ],
+    rules: [
+      {
+        required: true,
+        message: 'Please select your citizenship',
+      },
+    ],
     onChange: (value) => setCitizenship(value),
   };
 
@@ -412,6 +180,12 @@ export default function OnboardingForm() {
       { label: 'F1(OPT/CPT)', value: 'F1' },
       { label: 'Others', value: 'others' },
     ],
+    rules: [
+      {
+        required: true,
+        message: 'Please select your work authorization',
+      },
+    ],
     onChange: (value) => setWorkVisa(value),
   };
 
@@ -419,12 +193,24 @@ export default function OnboardingForm() {
     name: 'visaInput',
     placeholder: 'Enter your visa type',
     type: 'input',
+    rules: [
+      {
+        required: true,
+        message: 'Please enter your visa type',
+      },
+    ],
   };
 
   const workAuthDurationField = {
     name: 'workAuthDuration',
     placeholder: 'Start and End Date',
     type: 'rangePicker',
+    rules: [
+      {
+        required: true,
+        message: 'Please enter your work visa duration',
+      },
+    ],
     onChange: (value) =>
       console.log(`start: ${new Date(value[0])} end: ${new Date(value[1])}`),
   };
@@ -446,6 +232,7 @@ export default function OnboardingForm() {
 
     return true;
   };
+
   const beforeOPTReceiptUpload = (file) => {
     // console.log(file);
     // Optionally validate file type and size
@@ -500,14 +287,20 @@ export default function OnboardingForm() {
       content: (
         <div>
           <Title level={3}>Personal Information</Title>
-          <div className='flex'>
+          <div className='flex gap-24'>
             {personalInfoFieldsOne.map((field) => (
-              <FormItem key={field.name} field={field} />
+              <FormItem
+                key={field.name}
+                field={field}
+              />
             ))}
           </div>
-          <div className='flex'>
+          <div className='flex gap-24'>
             {personalInfoFieldsTwo.map((field) => (
-              <FormItem key={field.name} field={field} />
+              <FormItem
+                key={field.name}
+                field={field}
+              />
             ))}
           </div>
         </div>
@@ -518,12 +311,34 @@ export default function OnboardingForm() {
       content: (
         <div>
           <Title level={3}>Contact</Title>
-          <div className='flex'>
-            <Form.Item name='cellPhone' label='Phone' key='phone'>
-              <Input type='text' placeholder='Phone' size='large' />
+          <div className='flex gap-24'>
+            <Form.Item
+              name='cellPhone'
+              label='Phone'
+              key='phone'
+              rules={[
+                {
+                  required: true,
+                  message: 'Please enter your phone number',
+                },
+              ]}
+            >
+              <Input
+                type='text'
+                placeholder='Phone'
+                size='large'
+              />
             </Form.Item>
-            <Form.Item name='email' label='Email' key='email'>
-              <Input type='text' size='large' disabled />
+            <Form.Item
+              name='email'
+              label='Email'
+              key='email'
+            >
+              <Input
+                type='text'
+                size='large'
+                disabled
+              />
             </Form.Item>
           </div>
         </div>
@@ -534,9 +349,12 @@ export default function OnboardingForm() {
       content: (
         <div>
           <Title level={3}>Address</Title>
-          <div className='flex'>
+          <div className='flex gap-x-24 gap-y-4 flex-wrap'>
             {addressFields.map((field) => (
-              <FormItem key={field.name} field={field} />
+              <FormItem
+                key={field.name}
+                field={field}
+              />
             ))}
           </div>
         </div>
@@ -547,10 +365,16 @@ export default function OnboardingForm() {
       content: (
         <div>
           <Title level={3}>Work Authorization</Title>
-          <div className='flex'>
-            <FormItem key={citizenshipField.name} field={citizenshipField} />
+          <div className='flex gap-x-24 gap-y-4 flex-wrap'>
+            <FormItem
+              key={citizenshipField.name}
+              field={citizenshipField}
+            />
             {citizenship === 'others' && (
-              <FormItem key={workVisaField.name} field={workVisaField} />
+              <FormItem
+                key={workVisaField.name}
+                field={workVisaField}
+              />
             )}
             {workVisa === 'F1' && (
               <Form.Item
@@ -559,16 +383,31 @@ export default function OnboardingForm() {
                 label='Upload your OPT Receipt'
                 valuePropName='fileList'
                 getValueFromEvent={normFile}
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please upload your OPT receipt',
+                  },
+                ]}
               >
-                <Upload {...uploadProps} beforeUpload={beforeOPTReceiptUpload}>
-                  <Button icon={<UploadOutlined />} size='large'>
+                <Upload
+                  {...uploadProps}
+                  beforeUpload={beforeOPTReceiptUpload}
+                >
+                  <Button
+                    icon={<UploadOutlined />}
+                    size='large'
+                  >
                     Click to Upload your OPT receipt
                   </Button>
                 </Upload>
               </Form.Item>
             )}
             {workVisa === 'others' && (
-              <FormItem key={visaInputField.name} field={visaInputField} />
+              <FormItem
+                key={visaInputField.name}
+                field={visaInputField}
+              />
             )}
             {citizenship === 'others' && (
               <FormItem
@@ -584,7 +423,7 @@ export default function OnboardingForm() {
       title: 'Step 6',
       content: (
         <div>
-          <Title level={3}>Referral</Title>
+          <Title level={3}>Referral (Optional)</Title>
           <FormList
             listName='reference'
             inputFields={referralAndEmergencyFields}
@@ -597,11 +436,12 @@ export default function OnboardingForm() {
       title: 'Step 7',
       content: (
         <div>
-          <Title level={3}>Emergency Contacts (Optional)</Title>
+          <Title level={3}>Emergency Contacts</Title>
           <FormList
             listName='emergencyContacts'
             inputFields={referralAndEmergencyFields.slice(0, 5)}
             isReferral={false}
+            required
           />
         </div>
       ),
@@ -629,7 +469,6 @@ export default function OnboardingForm() {
     const values = form.getFieldsValue(true);
 
     const {
-      citizenship,
       dateOfBirth,
       optReceipt,
       profilePicture,
@@ -642,11 +481,26 @@ export default function OnboardingForm() {
     const newReference = reference[0] || [];
     const newStartDate = new Date(workAuthDuration[0]);
     const newEndDate = new Date(workAuthDuration[1]);
-    const profileLink = profilePicture[0].response.url;
-    const profileFile = { fileName: 'profilePicture', file: profileLink };
+    const profileLink = profilePicture?.[0]?.response.url;
+    const profileName = profilePicture?.[0]?.name;
+    const profileFile = {
+      fileType: 'profilePicture',
+      fileName: profileName,
+      fileUrl: profileLink,
+      status: 'Approved',
+    };
     const optLink = optReceipt[0].response.url;
-    const optFile = { fileName: 'optReceipt', file: optLink };
-    const newDocuments = [profileFile, optFile];
+    const optFileName = optReceipt[0].name;
+    const optFile = {
+      fileType: 'optReceipt',
+      fileName: optFileName,
+      fileUrl: optLink,
+    };
+    const newDocuments = [
+      profileFile,
+      { fileType: 'diverLicense', status: 'Approved' },
+      optFile,
+    ];
 
     const data = {
       ...rest,
@@ -655,6 +509,7 @@ export default function OnboardingForm() {
       workAuthStartDate: newStartDate,
       workAuthEndDate: newEndDate,
       documents: newDocuments,
+      status: 'Pending',
     };
 
     dispatch(updateCurUserProfile(data));
@@ -672,47 +527,52 @@ export default function OnboardingForm() {
         name='onboarding-form'
         onFinish={onSubmit}
         onSubmitCapture={(e) => e.preventDefault()}
-        className='border-2 border-rose-400'
         style={formStyle}
-        // initialValues={
-        //   {
-        //     profilePicture: [
-        //       {
-        //         uid: '1',
-        //         name: 'image.png',
-        //         status: 'done',
-        //         url: 'http://localhost:6173/files/6f684825-352b-4053-92f9-4cd11ae1f341.jpg',
-        //       },
-        //     ],
-        //     firstName: curProfile.firstName,
-        //   }
-        //   // initFormFields
-        // }
       >
-        <div>
+        <div className='min-h-96 flex flex-col justify-between '>
           <div className='steps-content'>{steps[current].content}</div>
 
-          <div className='steps-btns' style={{ marginTop: 24 }}>
+          <div
+            className='steps-btns flex justify-center gap-96'
+            // style={{ marginTop: 24 }}
+          >
             {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+              <Button
+                style={{ margin: '0 8px' }}
+                onClick={() => prev()}
+              >
                 Previous
               </Button>
             )}
             {current < steps.length - 1 && (
-              <Button type='primary' onClick={() => next()}>
+              <Button
+                type='primary'
+                onClick={() => next()}
+              >
                 Next
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button type='primary' htmlType='submit'>
+              <Button
+                type='primary'
+                htmlType='submit'
+              >
                 Submit
               </Button>
             )}
           </div>
         </div>
-        <Steps size='small' current={current} style={{ marginTop: 24 }}>
+
+        <Steps
+          size='small'
+          current={current}
+          style={{ marginTop: 24 }}
+        >
           {steps.map((item) => (
-            <Step key={item.title} title={item.title} />
+            <Step
+              key={item.title}
+              title={item.title}
+            />
           ))}
         </Steps>
       </Form>
