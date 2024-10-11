@@ -89,7 +89,7 @@ const EmployeeVisaStatusTable = ({ data }) => {
   ];
 
   const dataSource = data.map((element) => {
-    let status = 'Approval';
+    let status = 'Approved';
     // if no document
     if (element.documents.length === 0) {
       status = 'Reject';
