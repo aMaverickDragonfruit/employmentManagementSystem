@@ -290,18 +290,12 @@ export default function OnboardingForm() {
           <Title level={3}>Personal Information</Title>
           <div className='flex gap-24'>
             {personalInfoFieldsOne.map((field) => (
-              <FormItem
-                key={field.name}
-                field={field}
-              />
+              <FormItem key={field.name} field={field} />
             ))}
           </div>
           <div className='flex gap-24'>
             {personalInfoFieldsTwo.map((field) => (
-              <FormItem
-                key={field.name}
-                field={field}
-              />
+              <FormItem key={field.name} field={field} />
             ))}
             <Form.Item
               label='Upload Driver License'
@@ -345,22 +339,10 @@ export default function OnboardingForm() {
                 },
               ]}
             >
-              <Input
-                type='text'
-                placeholder='Phone'
-                size='large'
-              />
+              <Input type='text' placeholder='Phone' size='large' />
             </Form.Item>
-            <Form.Item
-              name='email'
-              label='Email'
-              key='email'
-            >
-              <Input
-                type='text'
-                size='large'
-                disabled
-              />
+            <Form.Item name='email' label='Email' key='email'>
+              <Input type='text' size='large' disabled />
             </Form.Item>
           </div>
         </div>
@@ -373,10 +355,7 @@ export default function OnboardingForm() {
           <Title level={3}>Address</Title>
           <div className='flex gap-x-24 gap-y-4 flex-wrap'>
             {addressFields.map((field) => (
-              <FormItem
-                key={field.name}
-                field={field}
-              />
+              <FormItem key={field.name} field={field} />
             ))}
           </div>
         </div>
@@ -388,15 +367,9 @@ export default function OnboardingForm() {
         <div>
           <Title level={3}>Work Authorization</Title>
           <div className='flex gap-x-24 gap-y-4 flex-wrap'>
-            <FormItem
-              key={citizenshipField.name}
-              field={citizenshipField}
-            />
+            <FormItem key={citizenshipField.name} field={citizenshipField} />
             {citizenship === 'others' && (
-              <FormItem
-                key={workVisaField.name}
-                field={workVisaField}
-              />
+              <FormItem key={workVisaField.name} field={workVisaField} />
             )}
             {workVisa === 'F1' && (
               <Form.Item
@@ -412,24 +385,15 @@ export default function OnboardingForm() {
                   },
                 ]}
               >
-                <Upload
-                  {...uploadProps}
-                  beforeUpload={beforeOPTReceiptUpload}
-                >
-                  <Button
-                    icon={<UploadOutlined />}
-                    size='large'
-                  >
+                <Upload {...uploadProps} beforeUpload={beforeOPTReceiptUpload}>
+                  <Button icon={<UploadOutlined />} size='large'>
                     Click to Upload your OPT receipt
                   </Button>
                 </Upload>
               </Form.Item>
             )}
             {workVisa === 'others' && (
-              <FormItem
-                key={visaInputField.name}
-                field={visaInputField}
-              />
+              <FormItem key={visaInputField.name} field={visaInputField} />
             )}
             {citizenship === 'others' && (
               <FormItem
@@ -520,7 +484,7 @@ export default function OnboardingForm() {
     };
     const newDocuments = [
       profileFile,
-      { fileType: 'diverLicense', status: 'Approved' },
+      { fileType: 'driverLicense', status: 'Approved' },
       optFile,
     ];
 
@@ -559,42 +523,26 @@ export default function OnboardingForm() {
             // style={{ marginTop: 24 }}
           >
             {current > 0 && (
-              <Button
-                style={{ margin: '0 8px' }}
-                onClick={() => prev()}
-              >
+              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
                 Previous
               </Button>
             )}
             {current < steps.length - 1 && (
-              <Button
-                type='primary'
-                onClick={() => next()}
-              >
+              <Button type='primary' onClick={() => next()}>
                 Next
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button
-                type='primary'
-                htmlType='submit'
-              >
+              <Button type='primary' htmlType='submit'>
                 Submit
               </Button>
             )}
           </div>
         </div>
 
-        <Steps
-          size='small'
-          current={current}
-          style={{ marginTop: 24 }}
-        >
+        <Steps size='small' current={current} style={{ marginTop: 24 }}>
           {steps.map((item) => (
-            <Step
-              key={item.title}
-              title={item.title}
-            />
+            <Step key={item.title} title={item.title} />
           ))}
         </Steps>
       </Form>

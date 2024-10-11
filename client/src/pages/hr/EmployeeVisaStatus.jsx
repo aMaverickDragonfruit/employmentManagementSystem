@@ -59,10 +59,7 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
           label = 'No action needed';
         }
         return (
-          <Tag
-            color={color}
-            key={status}
-          >
+          <Tag color={color} key={status}>
             {label.toUpperCase()}
           </Tag>
         );
@@ -90,45 +87,42 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
     },
   ];
 
-  const dataSource = data.map((element) => {
+  const dataSource = data.map((profile) => {
+    // console.log(profile.documents);
+
+    const requiredDocTypes = ['optReceipt', 'i983', 'optEAD'];
+
+    const requiredDocuments = profile.documents.filter((doc) =>
+      requiredDocTypes.includes(doc.fileType)
+    );
+
+    console.log(requiredDocuments);
+
     let status = 'Approved';
-    // if no document
-    if (element.documents.length === 0) {
-      status = 'Reject';
-    } else if (
-      element.documents.length === 1 &&
-      element.documents[0].fileName === 'ProfilePicture'
-    ) {
-      status = 'Reject';
-    } else {
-      for (let i = 0; i < element.documents.length; i++) {
-        if (element.documents[i].status === 'Reject') {
-          status = 'Reject';
-        } else if (element.documents[i].status === 'Pending') {
-          status = 'Pending';
-        } else {
-          continue;
-        }
+    let hasPending = false;
+
+    // Iterate through the required documents to determine the overall status
+    for (let doc of requiredDocuments) {
+      if (doc.status === 'Rejected') {
+        status = 'Rejected';
+        break; // No need to check further if any document is rejected
+      } else if (doc.status === 'Pending') {
+        hasPending = true; // Mark that there's at least one pending document
       }
     }
 
     return {
-      key: element._id,
-      userId: element.user,
-      name: element.firstName + ' ' + element.lastName,
-      visaType: element.workAuthType,
-      startDate: element.workAuthStartDate || 'None',
-      endDate: element.workAuthEndDate || 'None',
+      key: profile._id,
+      userId: profile.user,
+      name: profile.firstName + ' ' + profile.lastName,
+      visaType: profile.workAuthType === 'None' ? 'N/A' : profile.workAuthType,
+      startDate: profile.workAuthStartDate || 'None',
+      endDate: profile.workAuthEndDate || 'None',
       status: status,
     };
   });
 
-  return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-    ></Table>
-  );
+  return <Table columns={columns} dataSource={dataSource}></Table>;
 };
 
 export default function EmployeeVisaStatus() {
