@@ -188,89 +188,84 @@ export default function Profile() {
   }, [dispatch]);
 
   const prepareInitialValues = (curProfile) => {
-    let initialValues = {
-      email: curProfile.email,
-      firstName: curProfile.firstName,
-      middleName: curProfile.middleName,
-      lastName: curProfile.lastName,
-      preferredName: curProfile.preferredName,
-      gender: curProfile.gender,
-      dateOfBirth: dayjs(curProfile.dateOfBirth),
-      ssn: curProfile.ssn,
-      cellPhone: curProfile.cellPhone,
-      addressOne: curProfile.addressOne,
-      addressTwo: curProfile.addressTwo,
-      city: curProfile.city,
-      state: curProfile.state,
-      zipCode: curProfile.zipCode,
-      citizenship: curProfile.citizenship,
-      workAuthType: curProfile.workAuthType || null,
-      workAuthDuration: [
-        dayjs(curProfile.workAuthStartDate),
-        dayjs(curProfile.workAuthEndDate),
-      ],
-      reference: curProfile.reference ? [curProfile.reference] : [],
-      emergencyContacts: curProfile.emergencyContacts
-        ? curProfile.emergencyContacts.map((contact) => ({
-            ...contact,
-          }))
-        : [],
+    // Destructure necessary fields from curProfile with default values
+    const {
+      status,
+      email,
+      firstName,
+      middleName = '',
+      lastName,
+      preferredName = '',
+      gender,
+      dateOfBirth,
+      ssn = '',
+      cellPhone = '',
+      addressOne = '',
+      addressTwo = '',
+      city = '',
+      state,
+      zipCode = '',
+      citizenship,
+      workAuthType,
+      workAuthStartDate,
+      workAuthEndDate,
+      reference,
+      emergencyContacts = [],
+      documents = [],
+    } = curProfile;
+
+    // Initialize initialValues with common fields
+    const initialValues = {
+      email,
+      firstName,
+      middleName,
+      lastName,
     };
 
-    if (curProfile.documents && curProfile.documents.length > 0) {
-      initialValues.profilePicture = [
-        {
-          uid: curProfile.documents[0].uid || '-1',
-          name: curProfile.documents[0].fileName || 'profile.png',
-          response: { url: curProfile.documents[0].fileUrl || '' },
-          status: 'done',
-          url: curProfile.documents[0].fileUrl || '',
-        },
-      ];
-      initialValues.driverLicense = [
-        {
-          uid: curProfile.documents[1].uid || '-2',
-          name: curProfile.documents[1].fileName || 'driver-license.png',
-          response: { url: curProfile.documents[1].fileUrl || '' },
-          status: 'done',
-          url: curProfile.documents[1].fileUrl || '',
-        },
-      ];
-      initialValues.optReceipt = [
-        {
-          uid: curProfile.documents[2].uid || '-3',
-          name: curProfile.documents[2].fileName || 'OPT-Receipt.pdf',
-          response: { url: curProfile.documents[2].fileUrl || '' },
+    // If status is not 'New', add additional fields
+    if (status !== 'New') {
+      Object.assign(initialValues, {
+        preferredName,
+        gender,
+        dateOfBirth: dateOfBirth ? dayjs(dateOfBirth) : null,
+        ssn,
+        cellPhone,
+        addressOne,
+        addressTwo,
+        city,
+        state,
+        zipCode,
+        citizenship,
+        workAuthType,
+        workAuthDuration: [dayjs(workAuthStartDate), dayjs(workAuthEndDate)],
+        reference: reference ? [reference] : [],
+        emergencyContacts: emergencyContacts.map((contact) => ({ ...contact })),
+      });
 
-          status: 'done',
-          url: curProfile.documents[2].fileUrl || '',
-        },
-      ];
+      // Destructure documents with default empty objects
+      const [profileDoc = {}, driverLicenseDoc = {}, optReceiptDoc = {}] =
+        documents;
 
-      initialValues.uploadedFiles = [
-        {
-          uid: curProfile.documents[0].uid || '-4',
-          name: curProfile.documents[0].fileName || 'profile.png',
-          response: { url: curProfile.documents[0].fileUrl || '' },
-          status: 'done',
-          url: curProfile.documents[0].fileUrl || '',
-        },
-        {
-          uid: curProfile.documents[1].uid || '-5',
-          name: curProfile.documents[1].fileName || 'driver-license.png',
-          response: { url: curProfile.documents[1].fileUrl || '' },
-          status: 'done',
-          url: curProfile.documents[1].fileUrl || '',
-        },
-        {
-          uid: curProfile.documents[2].uid || '-6',
-          name: curProfile.documents[2].fileName || 'OPT-Receipt.pdf',
-          response: { url: curProfile.documents[2].fileUrl || '' },
+      // Helper function to construct document objects
+      const constructDocument = (document, uid) => {
+        const { fileUrl, fileName } = document;
+        if (!fileUrl) return [];
 
-          status: 'done',
-          url: curProfile.documents[2].fileUrl || '',
-        },
-      ];
+        return [
+          {
+            uid: uid.toString(),
+            name: fileName || 'default.png',
+            response: { url: fileUrl },
+            status: 'done',
+            url: fileUrl,
+          },
+        ];
+      };
+
+      // Assign documents using the helper function
+      initialValues.profilePicture = constructDocument(profileDoc, -1);
+      initialValues.driverLicense = constructDocument(driverLicenseDoc, -2);
+      initialValues.optReceipt = constructDocument(optReceiptDoc, -3);
     }
 
     return initialValues;
@@ -306,7 +301,7 @@ export default function Profile() {
       fileType: 'profilePicture',
       fileName: profileName,
       fileUrl: profileLink,
-      status: 'Approved',
+      status: 'Pending',
     };
     const driverLicenseLink = driverLicense?.[1]?.response.url;
     const driverLicenseName = driverLicense?.[1]?.name;
@@ -314,7 +309,7 @@ export default function Profile() {
       fileType: 'driverLicense',
       fileName: driverLicenseName,
       fileUrl: driverLicenseLink,
-      status: 'Approved',
+      status: 'Pending',
     };
     const optLink = optReceipt[0].response.url;
     const optFileName = optReceipt[0].name;
@@ -322,6 +317,7 @@ export default function Profile() {
       fileType: 'optReceipt',
       fileName: optFileName,
       fileUrl: optLink,
+      status: 'Pending',
     };
 
     const newDocuments = [profileFile, driverLicenseFile, optFile];
@@ -544,7 +540,7 @@ export default function Profile() {
               field={workVisaField}
             />
           )}
-          {workVisa === 'F1' && (
+          {citizenship === 'others' && workVisa === 'F1' && (
             <Form.Item
               name='optReceipt'
               key='opt-receipt'
@@ -571,7 +567,7 @@ export default function Profile() {
               </Upload>
             </Form.Item>
           )}
-          {workVisa === 'others' && (
+          {citizenship === 'others' && workVisa === 'others' && (
             <FormItem
               key={visaInputField.name}
               field={visaInputField}

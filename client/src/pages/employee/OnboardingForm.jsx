@@ -49,68 +49,86 @@ export default function OnboardingForm() {
   }, [dispatch]);
 
   const prepareInitialValues = (curProfile) => {
-    let initialValues = {};
-    if (curProfile.status === 'New') {
-      initialValues = {
-        email: curProfile.email,
-        firstName: curProfile.firstName,
-        middleName: curProfile.middleName || '',
-        lastName: curProfile.lastName,
-      };
-    } else {
-      initialValues = {
-        email: curProfile.email,
-        firstName: curProfile.firstName,
-        middleName: curProfile.middleName || '',
-        lastName: curProfile.lastName,
-        preferredName: curProfile.preferredName || '',
-        gender: curProfile.gender || '',
-        dateOfBirth: dayjs(curProfile.dateOfBirth),
-        ssn: curProfile.ssn || '',
-        cellPhone: curProfile.cellPhone || '',
-        addressOne: curProfile.addressOne || '',
-        addressTwo: curProfile.addressTwo || '',
-        city: curProfile.city || '',
-        state: curProfile.state || '',
-        zipCode: curProfile.zipCode || '',
-        citizenship: curProfile.citizenship || '',
-        workAuthType: curProfile.workAuthType || null,
-        workAuthDuration: [
-          dayjs(curProfile.workAuthStartDate),
-          dayjs(curProfile.workAuthEndDate),
-        ],
-        reference: curProfile.reference ? [curProfile.reference] : [],
-        emergencyContacts: curProfile.emergencyContacts
-          ? curProfile.emergencyContacts.map((contact) => ({
-              ...contact,
-            }))
-          : [],
-      };
+    // Destructure necessary fields from curProfile with default values
+    const {
+      status,
+      email,
+      firstName,
+      middleName = '',
+      lastName,
+      preferredName = '',
+      gender,
+      dateOfBirth,
+      ssn = '',
+      cellPhone = '',
+      addressOne = '',
+      addressTwo = '',
+      city = '',
+      state,
+      zipCode = '',
+      citizenship,
+      workAuthType,
+      workAuthStartDate,
+      workAuthEndDate,
+      reference,
+      emergencyContacts = [],
+      documents = [],
+    } = curProfile;
 
-      if (curProfile.documents && curProfile.documents.length > 0) {
-        initialValues.profilePicture = [
+    // Initialize initialValues with common fields
+    const initialValues = {
+      email,
+      firstName,
+      middleName,
+      lastName,
+    };
+
+    // If status is not 'New', add additional fields
+    if (status !== 'New') {
+      Object.assign(initialValues, {
+        preferredName,
+        gender,
+        dateOfBirth: dateOfBirth ? dayjs(dateOfBirth) : null,
+        ssn,
+        cellPhone,
+        addressOne,
+        addressTwo,
+        city,
+        state,
+        zipCode,
+        citizenship,
+        workAuthType,
+        workAuthDuration: [dayjs(workAuthStartDate), dayjs(workAuthEndDate)],
+        reference: reference ? [reference] : [],
+        emergencyContacts: emergencyContacts.map((contact) => ({ ...contact })),
+      });
+
+      // Destructure documents with default empty objects
+      const [profileDoc = {}, driverLicenseDoc = {}, optReceiptDoc = {}] =
+        documents;
+
+      // Helper function to construct document objects
+      const constructDocument = (document, uid) => {
+        const { fileUrl, fileName } = document;
+        if (!fileUrl) return [];
+
+        return [
           {
-            uid: curProfile.documents[0].uid || '-1',
-            name: curProfile.documents[0].fileName || 'profile.png',
-            response: { url: curProfile.documents[0].fileUrl || '' },
+            uid: uid.toString(),
+            name: fileName || 'default.png',
+            response: { url: fileUrl },
             status: 'done',
-            url: curProfile.documents[0].fileUrl || '',
+            url: fileUrl,
           },
         ];
-        initialValues.optReceipt = [
-          {
-            uid: curProfile.documents[2].uid || '-2',
-            name: curProfile.documents[2].fileName || 'OPT-Receipt.pdf',
-            response: { url: curProfile.documents[2].fileUrl || '' },
+      };
 
-            status: 'done',
-            url: curProfile.documents[2].fileUrl || '',
-          },
-        ];
-      }
+      // Assign documents using the helper function
+      initialValues.profilePicture = constructDocument(profileDoc, -1);
+      initialValues.driverLicense = constructDocument(driverLicenseDoc, -2);
+      initialValues.optReceipt = constructDocument(optReceiptDoc, -3);
     }
 
-    console.log(initialValues);
     return initialValues;
   };
 
@@ -290,12 +308,18 @@ export default function OnboardingForm() {
           <Title level={3}>Personal Information</Title>
           <div className='flex gap-24'>
             {personalInfoFieldsOne.map((field) => (
-              <FormItem key={field.name} field={field} />
+              <FormItem
+                key={field.name}
+                field={field}
+              />
             ))}
           </div>
           <div className='flex gap-24'>
             {personalInfoFieldsTwo.map((field) => (
-              <FormItem key={field.name} field={field} />
+              <FormItem
+                key={field.name}
+                field={field}
+              />
             ))}
             <Form.Item
               label='Upload Driver License'
@@ -337,12 +361,34 @@ export default function OnboardingForm() {
                   required: true,
                   message: 'Please enter your phone number',
                 },
+                {
+                  validator: (_, value) => {
+                    const phonePattern =
+                      /^(\+1\s?)?(\([0-9]{3}\)|[0-9]{3})[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}$/;
+                    if (value && phonePattern.test(value)) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('Invalid US phone number'));
+                  },
+                },
               ]}
             >
-              <Input type='text' placeholder='Phone' size='large' />
+              <Input
+                type='text'
+                placeholder='Phone'
+                size='large'
+              />
             </Form.Item>
-            <Form.Item name='email' label='Email' key='email'>
-              <Input type='text' size='large' disabled />
+            <Form.Item
+              name='email'
+              label='Email'
+              key='email'
+            >
+              <Input
+                type='text'
+                size='large'
+                disabled
+              />
             </Form.Item>
           </div>
         </div>
@@ -355,7 +401,10 @@ export default function OnboardingForm() {
           <Title level={3}>Address</Title>
           <div className='flex gap-x-24 gap-y-4 flex-wrap'>
             {addressFields.map((field) => (
-              <FormItem key={field.name} field={field} />
+              <FormItem
+                key={field.name}
+                field={field}
+              />
             ))}
           </div>
         </div>
@@ -367,11 +416,17 @@ export default function OnboardingForm() {
         <div>
           <Title level={3}>Work Authorization</Title>
           <div className='flex gap-x-24 gap-y-4 flex-wrap'>
-            <FormItem key={citizenshipField.name} field={citizenshipField} />
+            <FormItem
+              key={citizenshipField.name}
+              field={citizenshipField}
+            />
             {citizenship === 'others' && (
-              <FormItem key={workVisaField.name} field={workVisaField} />
+              <FormItem
+                key={workVisaField.name}
+                field={workVisaField}
+              />
             )}
-            {workVisa === 'F1' && (
+            {citizenship === 'others' && workVisa === 'F1' && (
               <Form.Item
                 name='optReceipt'
                 key='opt-receipt'
@@ -385,15 +440,24 @@ export default function OnboardingForm() {
                   },
                 ]}
               >
-                <Upload {...uploadProps} beforeUpload={beforeOPTReceiptUpload}>
-                  <Button icon={<UploadOutlined />} size='large'>
+                <Upload
+                  {...uploadProps}
+                  beforeUpload={beforeOPTReceiptUpload}
+                >
+                  <Button
+                    icon={<UploadOutlined />}
+                    size='large'
+                  >
                     Click to Upload your OPT receipt
                   </Button>
                 </Upload>
               </Form.Item>
             )}
-            {workVisa === 'others' && (
-              <FormItem key={visaInputField.name} field={visaInputField} />
+            {citizenship === 'others' && workVisa === 'others' && (
+              <FormItem
+                key={visaInputField.name}
+                field={visaInputField}
+              />
             )}
             {citizenship === 'others' && (
               <FormItem
@@ -457,6 +521,7 @@ export default function OnboardingForm() {
     const {
       dateOfBirth,
       optReceipt,
+      driverLicense,
       profilePicture,
       reference,
       workAuthDuration,
@@ -473,20 +538,25 @@ export default function OnboardingForm() {
       fileType: 'profilePicture',
       fileName: profileName,
       fileUrl: profileLink,
-      status: 'Approved',
+      status: 'Pending',
     };
-    const optLink = optReceipt[0].response.url;
-    const optFileName = optReceipt[0].name;
+    const driverLicenseLink = driverLicense?.[0]?.response.url;
+    const driverLicenseName = driverLicense?.[0]?.name;
+    const driverLicenseFile = {
+      fileType: 'driverLicense',
+      fileName: driverLicenseName,
+      fileUrl: driverLicenseLink,
+      status: 'Pending',
+    };
+    const optLink = optReceipt?.[0]?.response.url;
+    const optFileName = optReceipt?.[0]?.name;
     const optFile = {
       fileType: 'optReceipt',
       fileName: optFileName,
       fileUrl: optLink,
+      status: 'Pending',
     };
-    const newDocuments = [
-      profileFile,
-      { fileType: 'driverLicense', status: 'Approved' },
-      optFile,
-    ];
+    const newDocuments = [profileFile, driverLicenseFile, optFile];
 
     const data = {
       ...rest,
@@ -499,8 +569,6 @@ export default function OnboardingForm() {
     };
 
     dispatch(updateCurUserProfile(data));
-
-    // console.log(values);
   };
 
   return (
@@ -523,26 +591,42 @@ export default function OnboardingForm() {
             // style={{ marginTop: 24 }}
           >
             {current > 0 && (
-              <Button style={{ margin: '0 8px' }} onClick={() => prev()}>
+              <Button
+                style={{ margin: '0 8px' }}
+                onClick={() => prev()}
+              >
                 Previous
               </Button>
             )}
             {current < steps.length - 1 && (
-              <Button type='primary' onClick={() => next()}>
+              <Button
+                type='primary'
+                onClick={() => next()}
+              >
                 Next
               </Button>
             )}
             {current === steps.length - 1 && (
-              <Button type='primary' htmlType='submit'>
+              <Button
+                type='primary'
+                htmlType='submit'
+              >
                 Submit
               </Button>
             )}
           </div>
         </div>
 
-        <Steps size='small' current={current} style={{ marginTop: 24 }}>
+        <Steps
+          size='small'
+          current={current}
+          style={{ marginTop: 24 }}
+        >
           {steps.map((item) => (
-            <Step key={item.title} title={item.title} />
+            <Step
+              key={item.title}
+              title={item.title}
+            />
           ))}
         </Steps>
       </Form>

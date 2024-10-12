@@ -20,12 +20,15 @@ const referenceSchema = new Schema({
 
 const documentSchema = new Schema(
   {
-    fileType: { type: String, required: true },
+    fileType: { type: String },
     fileName: { type: String },
-    fileUrl: { type: String, required: true },
+    fileUrl: { type: String },
     status: {
       type: String,
       default: 'Pending',
+    },
+    feedback: {
+      type: String,
     },
   },
   { timestamps: true }

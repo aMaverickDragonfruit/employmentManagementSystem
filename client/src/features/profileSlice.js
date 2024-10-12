@@ -92,8 +92,9 @@ export const updateCurUserProfile = createAsyncThunk(
 export const updateProfileById = createAsyncThunk(
   'profiles/updateProfileById',
   async (reqData, { rejectWithValue }) => {
+    const { id, data } = reqData;
     try {
-      const response = await updateProfileByIdApi(reqData);
+      const response = await updateProfileByIdApi(id, data);
       return response;
     } catch (error) {
       const errorMessage =
