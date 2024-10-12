@@ -98,7 +98,7 @@ export const personalInfoFieldsTwo = [
     name: 'gender',
     placeholder: 'Gender',
     type: 'select',
-    defaultOption: 'Gender',
+    // defaultOption: 'Gender',
     options: [
       {
         value: 'male',
@@ -113,11 +113,17 @@ export const personalInfoFieldsTwo = [
         label: 'Prefer not to answer',
       },
     ],
+    rules: [
+      {
+        required: true,
+        message: 'Please select your gender',
+      },
+    ],
     onChange: (value) => console.log(value),
   },
   {
     name: 'dateOfBirth',
-    placeholder: 'Date of Birth',
+    placeholder: 'Pick your birthday',
     type: 'datePicker',
     rules: [
       {
@@ -137,6 +143,15 @@ export const personalInfoFieldsTwo = [
       {
         required: true,
         message: 'Please enter your ssn',
+      },
+      {
+        validator: (_, value) => {
+          const ssnPattern = /^(?!000|666|9\d{2})\d{3}([- ]?)\d{2}\1\d{4}$/;
+          if (value && ssnPattern.test(value)) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error('Invalid SSN'));
+        },
       },
     ],
   },
@@ -192,6 +207,17 @@ export const addressFields = [
       {
         required: true,
         message: 'Please enter your zip code',
+      },
+      {
+        validator: (_, value) => {
+          // Regular expression to match 5-digit or 5+4-digit US ZIP codes
+          const zipPattern = /^\d{5}(-\d{4})?$/;
+
+          if (value && zipPattern.test(value)) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error('Invalid US ZIP Code'));
+        },
       },
     ],
   },
