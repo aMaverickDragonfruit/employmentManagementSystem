@@ -1,10 +1,16 @@
 import PageLayout from '../../components/layout/Page';
-import { Typography, Upload, Button, Select, Input, Form } from 'antd';
+import { Typography, Upload, Button, Select, Input, Form, Spin } from 'antd';
 const { TextArea } = Input;
 const { Title } = Typography;
-import { CloseOutlined, DownloadOutlined } from '@ant-design/icons';
+import {
+  CloseOutlined,
+  DownloadOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons';
 import styled from 'styled-components';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateProfileById } from '../../features/profileSlice';
 
 const CloseIcon = styled(CloseOutlined)`
   font-size: 150%;
@@ -43,7 +49,7 @@ const selectProps = {
       label: 'I-985',
     },
     {
-      value: 'ead',
+      value: 'optEAD',
       label: 'EAD',
     },
   ],
@@ -55,38 +61,13 @@ const props = {
       console.log(file, fileList);
     }
   },
-  fileList: [
-    {
-      uid: '1',
-      name: 'xxx.png',
-      status: 'uploading',
-      url: 'http://www.baidu.com/xxx.png',
-      percent: 33,
-    },
-    {
-      uid: '2',
-      name: 'yyy.png',
-      status: 'done',
-      url: 'http://www.baidu.com/yyy.png',
-    },
-    {
-      uid: '3',
-      name: 'zzz.png',
-      status: 'error',
-      response: 'Server Error 500',
-      // custom error message to show
-      url: 'http://www.baidu.com/zzz.png',
-    },
-  ],
   showUploadList: {
-    extra: ({ size = 0 }) => (
+    extra: ({}) => (
       <span
         style={{
           color: '#cccccc',
         }}
-      >
-        ({(size / 1024 / 1024).toFixed(2)}MB)
-      </span>
+      ></span>
     ),
     showDownloadIcon: true,
     downloadIcon: <DownloadOutlined />,
@@ -95,6 +76,7 @@ const props = {
 };
 
 export const ReviewFiles = ({ handleClose }) => {
+  const dispatch = useDispatch();
   const [form] = Form.useForm();
 
   const [showSelect, setShowSelect] = useState(false);
@@ -112,9 +94,54 @@ export const ReviewFiles = ({ handleClose }) => {
     setSubmitAction('Approve');
   };
 
+  const { selectedProfile, loading, error } = useSelector(
+    (state) => state.profileSlice
+  );
+
+  let fileList = [];
+  const documents = selectedProfile.documents;
+  if (documents?.length > 0) {
+    fileList = documents.map((document) => ({
+      uir: document._id,
+      name: document.fileType,
+      status: 'done',
+      url: document.fileUrl,
+    }));
+  }
+
   const onSubmit = (value) => {
-    console.log(submitAction);
-    console.log(value);
+    const fileTypeMap = new Map([
+      ['profilePicture', 0],
+      ['driverLicense', 1],
+      ['optReceipt', 2],
+      ['i983', 3],
+      ['optEAD', 4],
+    ]);
+    const profileId = selectedProfile._id;
+    let documents = [...selectedProfile.documents];
+    const fileIndex = fileTypeMap.get(value.fileType);
+    let updatedDocument = { ...documents[fileIndex] };
+    if (submitAction === 'Approve') {
+      updatedDocument.status = 'Approved';
+      updatedDocument.feedback = 'Great!';
+      updatedDocument.updatedAt = new Date().toISOString();
+    } else if (submitAction === 'Reject') {
+      updatedDocument.status = 'Rejected';
+      updatedDocument.feedback = value.feedback;
+      updatedDocument.updatedAt = new Date().toISOString();
+    }
+    documents[fileIndex] = updatedDocument;
+
+    console.log(selectedProfile.documents);
+    console.log(profileId);
+    console.log(documents);
+    const reqData = {
+      id: profileId,
+      data: { documents },
+    };
+
+    // console.log(reqData);
+    dispatch(updateProfileById(reqData));
   };
   return (
     <PageLayout>
@@ -136,7 +163,16 @@ export const ReviewFiles = ({ handleClose }) => {
             // name='unloadedFile'
             label='Uploaded Files'
           >
-            <Upload {...props}></Upload>
+            <Spin
+              spinning={loading}
+              indicator={<LoadingOutlined spin />}
+              size='large'
+            >
+              <Upload
+                {...props}
+                fileList={fileList}
+              ></Upload>
+            </Spin>
           </Form.Item>
           {/* Select file */}
           {showSelect && (
