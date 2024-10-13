@@ -1,15 +1,10 @@
 import { Typography } from 'antd';
 import PageLayout from '../../components/layout/Page';
-import {
-  Message,
-  FileUpload,
-  VisaSteps,
-  I983Templates,
-} from './VisaManagementComponents';
+import { VisaSteps, I983Templates } from './VisaManagementComponents';
 const { Title } = Typography;
 
 const testingDoc = [
-  { fileName: 'OPT-receipt', status: 'Approved' },
+  { fileName: 'OPT-receipt', status: 'New' },
   { fileName: 'EAD', status: 'Approved' },
   { fileName: 'i983', status: 'Rejected' },
   { fileName: 'i20', status: 'Rejected' },
@@ -22,12 +17,10 @@ export default function VisaManagement() {
     <PageLayout>
       <div className='flex flex-col gap-10'>
         <Title>Visa Management</Title>
-        {/* <FileUpload /> */}
         <VisaSteps
           visaDocuments={testingDoc}
           feedback={feedback}
         />
-        <I983Templates />
       </div>
     </PageLayout>
   );
