@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProfileForm from '../../components/ProfileForm';
 import PageLayout from '../../components/layout/Page';
 import { Typography, Button, Form, Input } from 'antd';
-const { Title } = Typography;
+const { Title, Text } = Typography;
 const { TextArea } = Input;
 
 export default function EmployeeProfile() {
@@ -51,6 +51,10 @@ export default function EmployeeProfile() {
   return (
     <PageLayout>
       <Title>{fullName} Onboarding Application</Title>
+      <div className='mb-10'>
+        <Text>Status: {selectedProfile.status}</Text>
+      </div>
+
       <ProfileForm
         isEditable={false}
         profile={selectedProfile}
