@@ -13,21 +13,49 @@ import Styles from './pages/Styles';
 import PasswordUpdated from './pages/auth/PasswordUpdated';
 import OnboardingApplications from './pages/hr/OnboardingApplications';
 import Testing from './pages/Testing';
+import EmployeeProfile from './pages/hr/EmployeeProfile';
 
 export default function App() {
   return (
     <>
       <Router>
         <Routes>
-          <Route path='/' element={<MainLayout />}>
-            <Route path='register/:registerToken' element={<Register />} />
-            <Route path='login' element={<Login />} />
-            <Route path='forgot-password' element={<UpdatePassword />} />
-            <Route path='password-updated' element={<PasswordUpdated />} />
-            <Route path='onboarding-form' element={<OnboardingForm />} />
-            <Route path='profile' element={<Profile />} />
-            <Route path='visa-management' element={<VisaManagement />} />
-            <Route path='employee-profiles' element={<EmployeeProfiles />} />
+          <Route
+            path='/'
+            element={<MainLayout />}
+          >
+            <Route
+              path='register/:registerToken'
+              element={<Register />}
+            />
+            <Route
+              path='login'
+              element={<Login />}
+            />
+            <Route
+              path='forgot-password'
+              element={<UpdatePassword />}
+            />
+            <Route
+              path='password-updated'
+              element={<PasswordUpdated />}
+            />
+            <Route
+              path='onboarding-form'
+              element={<OnboardingForm />}
+            />
+            <Route
+              path='profile'
+              element={<Profile />}
+            />
+            <Route
+              path='visa-management'
+              element={<VisaManagement />}
+            />
+            <Route
+              path='employee-profiles'
+              element={<EmployeeProfiles />}
+            />
             <Route
               path='employee-visa-status'
               element={<EmployeeVisaStatus />}
@@ -40,9 +68,20 @@ export default function App() {
               path='onboarding-applications'
               element={<OnboardingApplications />}
             />
-            <Route path='testing' element={<Testing />} />
+            <Route
+              path='onboarding-applications/:id'
+              element={<EmployeeProfile />}
+            />
+
+            <Route
+              path='testing'
+              element={<Testing />}
+            />
           </Route>
-          <Route path='/styles' element={<Styles />} />
+          <Route
+            path='/styles'
+            element={<Styles />}
+          />
         </Routes>
       </Router>
     </>
