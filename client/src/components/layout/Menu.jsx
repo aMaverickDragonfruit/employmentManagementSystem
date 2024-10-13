@@ -1,14 +1,14 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Layout, Menu } from 'antd';
+import { Menu } from 'antd';
 import {
   TeamOutlined,
   IdcardOutlined,
   UsergroupAddOutlined,
   ProfileOutlined,
+  FileOutlined,
 } from '@ant-design/icons';
 
-const AppMenu = ({ isHR }) => {
+const AppMenu = ({ isHR, applicationStatus }) => {
   const navigate = useNavigate();
   let menuItems = [];
   if (isHR) {
@@ -43,17 +43,26 @@ const AppMenu = ({ isHR }) => {
         ],
       },
     ];
+  } else if (!isHR && applicationStatus !== 'Approved') {
+    menuItems = [
+      {
+        label: 'Onboarding Form',
+        key: '0',
+        icon: <FileOutlined />,
+        onClick: () => navigate('/onboarding-form'),
+      },
+    ];
   } else {
     menuItems = [
       {
         label: 'Profile',
-        key: '0',
+        key: '1',
         icon: <ProfileOutlined />,
         onClick: () => navigate('/profile'),
       },
       {
         label: 'Visa Management',
-        key: '1',
+        key: '2',
         icon: <IdcardOutlined />,
         onClick: () => navigate('/visa-management'),
       },

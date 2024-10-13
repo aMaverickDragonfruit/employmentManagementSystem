@@ -1,13 +1,15 @@
-import { ConfigProvider, Layout } from 'antd';
+import { ConfigProvider, Layout, Spin } from 'antd';
 const { Content } = Layout;
 import Footer from './Footer';
 import Home from '../../pages/Home';
 import Navbar from './Navbar';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import userSlice from '../../features/userSlice';
 import AppMenu from './Menu';
+import { fetchCurUserProfile } from '../../features/profileSlice';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const layoutStyle = {
   position: 'relative',
@@ -20,12 +22,21 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  // const [isAuthenticated, setIsAuthenticated] = useState(true);
-  // const navigate = useNavigate();
-  // const dispatch = useDispatch();
   const { user, isAuthenticated, loading, error } = useSelector(
     (state) => state.userSlice
   );
+
+  const {
+    curProfile,
+    loading: profileLoading,
+    error: profileError,
+  } = useSelector((state) => state.profileSlice);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(fetchCurUserProfile());
+  }, [dispatch]);
 
   return (
     <ConfigProvider
@@ -38,7 +49,17 @@ export default function MainLayout() {
       <Layout style={layoutStyle}>
         <div className='app-header fixed top-0 w-full z-50'>
           <Navbar />
-          {user && isAuthenticated ? <AppMenu isHR={user.isHR} /> : null}
+          {user && isAuthenticated ? (
+            <Spin
+              spinning={profileLoading}
+              indicator={<LoadingOutlined spin />}
+            >
+              <AppMenu
+                isHR={user.isHR}
+                applicationStatus={curProfile.status}
+              />
+            </Spin>
+          ) : null}
         </div>
         <Content
           style={{

@@ -6,7 +6,7 @@ import {
   Button,
   message,
   Input,
-  Space,
+  Alert,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 const { Step } = Steps;
@@ -20,6 +20,7 @@ import {
   personalInfoFieldsTwo,
   addressFields,
   referralAndEmergencyFields,
+  ApplicationStatus,
 } from './OnboardingFormComponents';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -31,10 +32,11 @@ import dayjs from 'dayjs';
 import { commonInputProps } from './ProfileComponents';
 
 const formStyle = {
-  minHeight: '560px',
+  // minHeight: '200px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+  paddingBottom: '40px',
 };
 
 export default function OnboardingForm() {
@@ -70,7 +72,7 @@ export default function OnboardingForm() {
       workAuthType,
       workAuthStartDate,
       workAuthEndDate,
-      reference,
+      reference = null,
       emergencyContacts = [],
       documents = [],
     } = curProfile;
@@ -486,7 +488,7 @@ export default function OnboardingForm() {
       title: 'Step 7',
       content: (
         <div>
-          <Title level={3}>Emergency Contacts</Title>
+          <Title level={3}>Emergency Contacts (Required at least one)</Title>
           <FormList
             listName='emergencyContacts'
             inputFields={referralAndEmergencyFields.slice(0, 5)}
@@ -568,13 +570,29 @@ export default function OnboardingForm() {
       status: 'Pending',
     };
 
+    // console.log(data);
     dispatch(updateCurUserProfile(data));
   };
+
+  const applicationStatus = curProfile.status;
+  const hrFeedback = curProfile.feedback;
 
   return (
     <PageLayout>
       {contextHolder}
       <Title>Onboarding Form</Title>
+
+      <ApplicationStatus applicationStatus={applicationStatus} />
+      {applicationStatus === 'Rejected' && (
+        <Alert
+          message='HR feedback'
+          description={hrFeedback}
+          type='error'
+          showIcon
+          style={{ maxWidth: '38%', marginBottom: '20px' }}
+        />
+      )}
+
       <Form
         form={form}
         layout='vertical'
@@ -583,7 +601,7 @@ export default function OnboardingForm() {
         onSubmitCapture={(e) => e.preventDefault()}
         style={formStyle}
       >
-        <div className='min-h-96 flex flex-col justify-between '>
+        <div className='min-h-80 flex flex-col justify-between pb-10'>
           <div className='steps-content'>{steps[current].content}</div>
 
           <div
