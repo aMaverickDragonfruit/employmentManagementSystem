@@ -2,21 +2,19 @@ import { Schema, model } from 'mongoose';
 
 const contactSchema = new Schema(
   {
-    firstName: { type: String, required: true },
+    firstName: { type: String },
     middleName: { type: String },
-    lastName: { type: String, required: true },
-    phone: { type: String, required: true },
-    relationship: { type: String, required: true },
+    lastName: { type: String },
+    phone: { type: String },
+    relationship: { type: String },
   },
   { timestamps: true }
 );
 
 const referenceSchema = new Schema({
   ...contactSchema.obj,
-  email: { type: String, required: true },
+  email: { type: String },
 });
-
-// const status = new Set(['Pending', 'Approved', 'Rejected']);
 
 const documentSchema = new Schema(
   {
@@ -43,6 +41,9 @@ const ProfileSchema = new Schema({
   status: {
     type: String,
     default: 'New',
+  },
+  feedback: {
+    type: String,
   },
   firstName: {
     type: String,
@@ -116,11 +117,11 @@ const ProfileSchema = new Schema({
   documents: {
     type: [documentSchema],
     default: [
-      { fileType: 'profilePicture', status: 'Approved' },
-      { fileType: 'driverLicense', status: 'Approved' },
-      { fileType: 'optReceipt', status: 'Pending' },
-      { fileType: 'i983', status: 'Pending' },
-      { fileType: 'optEAD', status: 'Pending' },
+      { fileType: 'profilePicture', status: 'New' },
+      { fileType: 'driverLicense', status: 'New' },
+      { fileType: 'optReceipt', status: 'New' },
+      { fileType: 'i983', status: 'New' },
+      { fileType: 'optEAD', status: 'New' },
     ],
   },
 });
