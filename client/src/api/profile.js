@@ -71,3 +71,26 @@ export const updateProfileByUserId = async (id, data) => {
     throw err;
   }
 };
+
+export const updateProfileDocStatusByUserId = async (data) => {
+  try {
+    const response = await api.put(`${BASE_URL}/documents/status`, data);
+    return response.data;
+  } catch (err) {
+    console.error(
+      'Error updating employee profile document status by id:',
+      err
+    );
+    throw err;
+  }
+};
+
+export const updateCurUserProfileDoc = async (data) => {
+  try {
+    const response = await api.put(`${BASE_URL}/me/documents`, data);
+    return response.data;
+  } catch (err) {
+    console.error('Error updating current employee profile document', err);
+    throw err;
+  }
+};

@@ -7,6 +7,8 @@ import {
   updateProfileById,
   updateCurUserProfile,
   updateProfileByUserId,
+  updateProfileDocStatusByUserId,
+  updateCurUserProfileDoc,
 } from '../controllers/profiles.js';
 import { verifyLoginToken, checkHR } from '../middlewares/auth.js';
 
@@ -60,5 +62,19 @@ router.put('/:id', updateProfileById);
  * @access Public
  */
 router.put('/users/:id', updateProfileByUserId);
+
+/**
+ * @route PUT /api/profiles/documents
+ * @desc Update a profile's document status by user ID
+ * @access Private HR
+ */
+router.put('/documents/status', updateProfileDocStatusByUserId);
+
+/**
+ * @route PUT /api/me/documents
+ * @desc Update a current user's profile document
+ * @access Private User
+ */
+router.put('/me/documents', verifyLoginToken, updateCurUserProfileDoc);
 
 export default router;
