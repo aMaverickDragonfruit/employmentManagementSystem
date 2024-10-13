@@ -12,6 +12,7 @@ const transporter = nodemailer.createTransport({
 
 const sendMail = async (receiver, subject) => {
   const { name, email, registrationLink } = receiver;
+  const visaLink = 'http://localhost:3001/visa-management';
   let emailContent = '';
 
   if (subject === 'Onboarding Application') {
@@ -33,7 +34,8 @@ const sendMail = async (receiver, subject) => {
   } else {
     emailContent = `
     <p>Dear ${name},</p>
-    <p>Click <a href=${registrationLink}>here</a> to sign up your account. The registration link expires in 3 hours. Please sign up your account at your earliest convenience. Thank you.</p>
+    <p>Your application visa status has been updated!</p>
+    <p>Please click <a href=${visaLink}>here</a> to view your next step.</p>
     <p>Best regards</p>
     <p>iKunKun HR Department</p>
   `;

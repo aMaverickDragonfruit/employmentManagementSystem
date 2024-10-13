@@ -391,10 +391,7 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
       {(fields, { add, remove }, { errors }) => (
         <>
           {fields.map(({ key, name }) => (
-            <div
-              className='flex'
-              key={key}
-            >
+            <div className='flex' key={key}>
               {inputFields.map((field) => (
                 <Form.Item
                   label={field.placeholder}
@@ -402,10 +399,7 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
                   name={[name, field.name]}
                   rules={field.rules}
                 >
-                  <Input
-                    placeholder={field.placeholder}
-                    size='large'
-                  />
+                  <Input placeholder={field.placeholder} size='large' />
                 </Form.Item>
               ))}
 
@@ -476,7 +470,7 @@ const StatusNew = () => {
 };
 
 export const ApplicationStatus = ({ applicationStatus }) => {
-  console.log(applicationStatus);
+  // console.log(applicationStatus);
   let current = 0;
   let status = 'process';
   switch (applicationStatus) {

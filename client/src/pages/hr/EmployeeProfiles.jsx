@@ -63,7 +63,7 @@ export default function EmployeeProfiles() {
     (state) => state.profileSlice
   );
 
-  console.log(profiles);
+  // console.log(profiles);
 
   useEffect(() => {
     dispatch(fetchProfiles());

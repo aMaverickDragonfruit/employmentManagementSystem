@@ -16,6 +16,8 @@ import Testing from './pages/Testing';
 import EmployeeProfile from './pages/hr/EmployeeProfile';
 import ProtectedAuthRoute from './components/ProtectedAuthRoute';
 import ProtectedApprovedRoute from './components/ProtectedApprovedRoute';
+import ProtectedHrRoute from './components/ProtectedHrRoute';
+import Page404 from './pages/Page404';
 
 export default function App() {
   return (
@@ -46,26 +48,59 @@ export default function App() {
                 </ProtectedAuthRoute>
               }
             />
-            <Route path='visa-management' element={<VisaManagement />} />
-            <Route path='employee-profiles' element={<EmployeeProfiles />} />
+            <Route
+              path='visa-management'
+              element={
+                <ProtectedAuthRoute>
+                  <ProtectedApprovedRoute>
+                    <VisaManagement />
+                  </ProtectedApprovedRoute>
+                </ProtectedAuthRoute>
+              }
+            />
+            <Route
+              path='employee-profiles'
+              element={
+                <ProtectedHrRoute>
+                  <EmployeeProfiles />
+                </ProtectedHrRoute>
+              }
+            />
             <Route
               path='employee-visa-status'
-              element={<EmployeeVisaStatus />}
+              element={
+                <ProtectedHrRoute>
+                  <EmployeeVisaStatus />
+                </ProtectedHrRoute>
+              }
             />
             <Route
               path='employee-registration'
-              element={<EmployeeRegistration />}
+              element={
+                <ProtectedHrRoute>
+                  <EmployeeRegistration />
+                </ProtectedHrRoute>
+              }
             />
             <Route
               path='onboarding-applications'
-              element={<OnboardingApplications />}
+              element={
+                <ProtectedHrRoute>
+                  <OnboardingApplications />
+                </ProtectedHrRoute>
+              }
             />
             <Route
               path='onboarding-applications/:id'
-              element={<EmployeeProfile />}
+              element={
+                <ProtectedHrRoute>
+                  <EmployeeProfile />
+                </ProtectedHrRoute>
+              }
             />
 
             <Route path='testing' element={<Testing />} />
+            <Route path='*' element={<Page404 />} />
           </Route>
           <Route path='/styles' element={<Styles />} />
         </Routes>

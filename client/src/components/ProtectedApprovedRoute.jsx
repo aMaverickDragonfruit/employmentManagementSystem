@@ -1,19 +1,18 @@
-import { Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import Page403 from '../pages/Page403';
 
 export default function ProtectedApprovedRoute({ children }) {
   const { curProfile, loading, error } = useSelector(
     (state) => state.profileSlice
   );
-  const location = useLocation();
 
   //   // Handle loading state
-  if (loading || !curProfile.status) {
+  if (loading || !curProfile) {
     // Data is still loading
-    return <div></div>;
+    return null;
   } else if (curProfile.status === 'Approved') {
     return <>{children}</>;
   } else {
-    return <Navigate to='/' state={{ from: location }} />;
+    return <Page403 />;
   }
 }

@@ -1,13 +1,19 @@
-import { Table, Typography, Tag, Button } from 'antd';
+import { Table, Typography, Tag, Button, message, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import PageLayout from '../../components/layout/Page';
 const { Title } = Typography;
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfileById, fetchProfiles } from '../../features/profileSlice';
 import { useEffect, useState } from 'react';
 import { ReviewFiles } from './EmployeeVisaStatusComponents';
-import dayjs from 'dayjs';
+import { sendMail } from '../../api/mailer';
 
-const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
+const EmployeeVisaStatusTable = ({
+  data,
+  handleViewDoc,
+  handleSendReminder,
+  sendingReminder,
+}) => {
   const columns = [
     {
       title: 'Name',
@@ -70,16 +76,30 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
       dataIdex: 'action',
       key: 'action',
       sorter: (a, b) => a.name.localeCompare(b.name),
-      render: (_, { status, key: profileId }) => {
-        let label = 'Send Notification';
-        if (status === 'Pending' || status === 'Approved')
-          label = 'View Document';
+      render: (_, { status, key: profileId, name, email }) => {
+        if (status === 'Pending' || status === 'Approved') {
+          return (
+            <Button type='link' onClick={() => handleViewDoc(profileId)}>
+              View Documents
+            </Button>
+          );
+        } else {
+          return (
+            <Spin
+              indicator={<LoadingOutlined spin />}
+              size='large'
+              spinning={sendingReminder}
+            >
+              <Button
+                type='link'
+                onClick={() => handleSendReminder({ name, email })}
+              >
+                Send Reminder
+              </Button>
+            </Spin>
+          );
+        }
         // wait for complete the link
-        return (
-          <Button type='link' onClick={() => handleViewDoc(profileId)}>
-            View Documents
-          </Button>
-        );
       },
     },
   ];
@@ -93,7 +113,7 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
       requiredDocTypes.includes(doc.fileType)
     );
 
-    console.log(requiredDocuments);
+    // console.log(requiredDocuments);
 
     let status = 'Approved';
     let hasPending = false;
@@ -133,6 +153,7 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
       key: profile._id,
       userId: profile.user,
       name: profile.firstName + ' ' + profile.lastName,
+      email: profile.email,
       visaType: profile.workAuthType === 'None' ? 'N/A' : profile.workAuthType,
       startDate: profile.workAuthStartDate || 'None',
       endDate: profile.workAuthEndDate || 'None',
@@ -144,10 +165,14 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
 };
 
 export default function EmployeeVisaStatus() {
+  const [messageApi, contextHolder] = message.useMessage();
+  const [sendingReminder, setSendingReminder] = useState(false);
   const dispatch = useDispatch();
-  const { profiles, curProfile, loading, error } = useSelector(
-    (state) => state.profileSlice
-  );
+  const {
+    profiles,
+    loading: profilesLoading,
+    error,
+  } = useSelector((state) => state.profileSlice);
 
   // console.log(profiles);
 
@@ -158,7 +183,7 @@ export default function EmployeeVisaStatus() {
   const [isViewDoc, setIsViewDoc] = useState(false);
 
   const handleOpenDocuments = (profileId) => {
-    console.log(profileId);
+    // console.log(profileId);
     dispatch(fetchProfileById(profileId));
     setIsViewDoc(true);
   };
@@ -167,12 +192,34 @@ export default function EmployeeVisaStatus() {
     setIsViewDoc(false);
   };
 
+  const handleSendReminder = async (receiver) => {
+    try {
+      const subject = 'Reminder';
+      setSendingReminder(true);
+      await sendMail(receiver, subject);
+      setSendingReminder(false);
+      messageApi.open({
+        type: 'success',
+        content: 'Reminder has been sent',
+      });
+    } catch (error) {
+      console.log(error.message);
+      messageApi.open({
+        type: 'error',
+        content: 'Sending reminder failed, Please try again later.',
+      });
+    }
+  };
+
   return (
     <PageLayout>
+      {contextHolder}
       <Title>Employee Visa Status</Title>
       <EmployeeVisaStatusTable
+        sendingReminder={sendingReminder}
         data={profiles}
         handleViewDoc={(profileId) => handleOpenDocuments(profileId)}
+        handleSendReminder={(receiver) => handleSendReminder(receiver)}
       />
       {isViewDoc && (
         <>

@@ -232,12 +232,18 @@ export default function ProfileForm({ isEditable, profile }) {
       });
 
       // Destructure documents with default empty objects
-      const [profileDoc = {}, driverLicenseDoc = {}, optReceiptDoc = {}] =
-        documents;
+      const [
+        profileDoc = {},
+        driverLicenseDoc = {},
+        optReceiptDoc = {},
+        optEADDoc = {},
+        i983Doc = {},
+        i20Doc = {},
+      ] = documents;
 
       // Helper function to construct document objects
       const constructDocument = (document, uid) => {
-        const { fileUrl, fileName } = document;
+        const { fileUrl, fileName, status } = document;
         if (!fileUrl) return [];
 
         return [
@@ -245,6 +251,7 @@ export default function ProfileForm({ isEditable, profile }) {
             uid: uid.toString(),
             name: fileName || 'default.png',
             response: { url: fileUrl },
+            fileStatus: status,
             status: 'done',
             url: fileUrl,
           },
@@ -254,6 +261,7 @@ export default function ProfileForm({ isEditable, profile }) {
       initialValues.uploadedFiles = documents.map((document) => ({
         uid: document._id,
         name: document.fileType,
+        fileStatus: document.status,
         status: 'done',
         url: document.fileUrl,
       }));
@@ -262,8 +270,12 @@ export default function ProfileForm({ isEditable, profile }) {
       initialValues.profilePicture = constructDocument(profileDoc, -1);
       initialValues.driverLicense = constructDocument(driverLicenseDoc, -2);
       initialValues.optReceipt = constructDocument(optReceiptDoc, -3);
+      initialValues.optEAD = constructDocument(optEADDoc, -4);
+      initialValues.i983 = constructDocument(i983Doc, -5);
+      initialValues.i20 = constructDocument(i20Doc, -6);
     }
 
+    console.log(initialValues);
     return initialValues;
   };
 
@@ -279,45 +291,90 @@ export default function ProfileForm({ isEditable, profile }) {
   const onSubmit = (values) => {
     const {
       dateOfBirth,
-      optReceipt,
-      driverLicense,
       profilePicture,
+      driverLicense,
+      optReceipt,
+      optEAD,
+      i983,
+      i20,
       reference,
       workAuthDuration,
       ...rest
     } = values;
 
     const newDateOfBirth = new Date(dateOfBirth);
-    const newReference = reference[0] || [];
+    const newReference = reference?.[0] || null;
     const newStartDate = new Date(workAuthDuration[0]);
     const newEndDate = new Date(workAuthDuration[1]);
-    const profileLink = profilePicture?.[0]?.response.url;
+
     const profileName = profilePicture?.[0]?.name;
+    const profileLink = profilePicture?.[0]?.response.url;
+    const profileStatus = profilePicture?.[0]?.fileStatus;
     const profileFile = {
       fileType: 'profilePicture',
       fileName: profileName,
       fileUrl: profileLink,
-      status: 'Pending',
+      status: profileStatus,
     };
-    const driverLicenseLink = driverLicense?.[0]?.response.url;
+
     const driverLicenseName = driverLicense?.[0]?.name;
+    const driverLicenseLink = driverLicense?.[0]?.response.url;
+    const driverLicenseStatus = driverLicense?.[0]?.fileStatus;
     const driverLicenseFile = {
       fileType: 'driverLicense',
       fileName: driverLicenseName,
       fileUrl: driverLicenseLink,
-      status: 'Pending',
+      status: driverLicenseStatus,
     };
-    const optLink = optReceipt[0].response.url;
-    const optFileName = optReceipt[0].name;
+    const optFileName = optReceipt?.[0]?.name;
+    const optFileLink = optReceipt?.[0]?.response.url;
+    const optFileStatus = optReceipt?.[0]?.fileStatus;
     const optFile = {
       fileType: 'optReceipt',
       fileName: optFileName,
-      fileUrl: optLink,
-      status: 'Pending',
+      fileUrl: optFileLink,
+      status: optFileStatus,
     };
 
-    const newDocuments = [profileFile, driverLicenseFile, optFile];
-    console.log(newDocuments);
+    const optEADFileName = optEAD?.[0]?.name;
+    const optEADFileLink = optEAD?.[0]?.response.url;
+    const optEADFileStatus = optEAD?.[0]?.fileStatus;
+    const optEADFile = {
+      fileType: 'optEAD',
+      fileName: optEADFileName,
+      fileUrl: optEADFileLink,
+      status: optEADFileStatus,
+    };
+
+    const i983FileName = i983?.[0]?.name;
+    const i983FileLink = i983?.[0]?.response.url;
+    const i983FileStatus = i983?.[0]?.fileStatus;
+    const i983File = {
+      fileType: 'i983',
+      fileName: i983FileName,
+      fileUrl: i983FileLink,
+      status: i983FileStatus,
+    };
+
+    const i20FileName = i20?.[0]?.name;
+    const i20FileLink = i20?.[0]?.response.url;
+    const i20FileStatus = i20?.[0]?.fileStatus;
+    const i20File = {
+      fileType: 'i20',
+      fileName: i20FileName,
+      fileUrl: i20FileLink,
+      status: i20FileStatus,
+    };
+
+    const newDocuments = [
+      profileFile,
+      driverLicenseFile,
+      optFile,
+      optEADFile,
+      i983File,
+      i20File,
+    ];
+    // console.log(newDocuments);
 
     const data = {
       ...rest,
@@ -396,10 +453,7 @@ export default function ProfileForm({ isEditable, profile }) {
         <Title level={4}>Personal Information</Title>
         <div style={formInputsStyle}>
           {personalInfoFieldsOne.map((field) => (
-            <FormItem
-              key={field.name}
-              field={field}
-            />
+            <FormItem key={field.name} field={field} />
           ))}
         </div>
         <div style={formInputsStyle}>
@@ -467,10 +521,7 @@ export default function ProfileForm({ isEditable, profile }) {
             ]}
           >
             <Upload {...uploadProps}>
-              <Button
-                icon={<UploadOutlined />}
-                {...commonInputProps}
-              >
+              <Button icon={<UploadOutlined />} {...commonInputProps}>
                 Click to Upload
               </Button>
             </Upload>
@@ -499,43 +550,24 @@ export default function ProfileForm({ isEditable, profile }) {
               },
             ]}
           >
-            <Input
-              {...commonInputProps}
-              placeholder='Phone'
-            />
+            <Input {...commonInputProps} placeholder='Phone' />
           </Form.Item>
-          <Form.Item
-            name='email'
-            label='Email'
-            key='email'
-          >
-            <Input
-              {...commonInputProps}
-              disabled
-            />
+          <Form.Item name='email' label='Email' key='email'>
+            <Input {...commonInputProps} disabled />
           </Form.Item>
         </div>
         <Title level={4}>Address</Title>
         <div style={formInputsStyle}>
           {addressFields.map((field) => (
-            <FormItem
-              key={field.name}
-              field={field}
-            />
+            <FormItem key={field.name} field={field} />
           ))}
         </div>
         {/* Work Authorization */}
         <Title level={4}>Work Authorization</Title>
         <div style={formInputsStyle}>
-          <FormItem
-            key={citizenshipField.name}
-            field={citizenshipField}
-          />
+          <FormItem key={citizenshipField.name} field={citizenshipField} />
           {citizenship === 'others' && (
-            <FormItem
-              key={workVisaField.name}
-              field={workVisaField}
-            />
+            <FormItem key={workVisaField.name} field={workVisaField} />
           )}
           {citizenship === 'others' && workVisa === 'F1' && (
             <Form.Item
@@ -551,24 +583,15 @@ export default function ProfileForm({ isEditable, profile }) {
                 },
               ]}
             >
-              <Upload
-                {...uploadProps}
-                beforeUpload={beforeOPTReceiptUpload}
-              >
-                <Button
-                  icon={<UploadOutlined />}
-                  size='large'
-                >
+              <Upload {...uploadProps} beforeUpload={beforeOPTReceiptUpload}>
+                <Button icon={<UploadOutlined />} size='large'>
                   Click to Upload your OPT receipt
                 </Button>
               </Upload>
             </Form.Item>
           )}
           {citizenship === 'others' && workVisa === 'others' && (
-            <FormItem
-              key={visaInputField.name}
-              field={visaInputField}
-            />
+            <FormItem key={visaInputField.name} field={visaInputField} />
           )}
           {citizenship === 'others' && (
             <FormItem
@@ -602,10 +625,7 @@ export default function ProfileForm({ isEditable, profile }) {
           key='uploaded files'
           valuePropName='fileList'
         >
-          <Upload
-            {...uploadProps}
-            disabled
-          ></Upload>
+          <Upload {...uploadProps} disabled></Upload>
         </Form.Item>
       </Form>
     </>
