@@ -23,7 +23,7 @@ export default function EmployeeProfile() {
 
   useEffect(() => {
     dispatch(fetchProfileById(profileId));
-  }, [dispatch]);
+  }, [dispatch, profileId]);
 
   const [isReject, setIsReject] = useState(false);
   const navigate = useNavigate();
@@ -55,10 +55,7 @@ export default function EmployeeProfile() {
         <Text>Status: {selectedProfile.status}</Text>
       </div>
 
-      <ProfileForm
-        isEditable={false}
-        profile={selectedProfile}
-      />
+      <ProfileForm isEditable={false} profile={selectedProfile} />
 
       <Title level={4}>HR Feedback</Title>
       <div className='mb-10 flex flex-col'>
@@ -66,17 +63,10 @@ export default function EmployeeProfile() {
         <div className='flex justify-around'>
           {selectedProfile.status === 'Pending' && !isReject && (
             <>
-              <Button
-                size='large'
-                onClick={() => setIsReject(true)}
-              >
+              <Button size='large' onClick={() => setIsReject(true)}>
                 Reject
               </Button>
-              <Button
-                type='primary'
-                size='large'
-                onClick={handleApprove}
-              >
+              <Button type='primary' size='large' onClick={handleApprove}>
                 Approve
               </Button>
             </>
@@ -102,16 +92,9 @@ export default function EmployeeProfile() {
                 },
               ]}
             >
-              <TextArea
-                placeholder='provide your feedback'
-                rows={4}
-              />
+              <TextArea placeholder='provide your feedback' rows={4} />
             </Form.Item>
-            <Button
-              htmlType='submit'
-              type='primary'
-              size='large'
-            >
+            <Button htmlType='submit' type='primary' size='large'>
               Send reject feedback
             </Button>
           </Form>
