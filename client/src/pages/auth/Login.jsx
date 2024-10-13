@@ -5,6 +5,7 @@ import AuthLayout from '../../components/auth/AuthLayout';
 import { useState } from 'react';
 import { loginUser } from '../../features/userSlice';
 import { useDispatch } from 'react-redux';
+import { fetchCurUserProfile } from '../../features/profileSlice';
 
 const fields = [
   {
@@ -30,6 +31,7 @@ export default function LogIn() {
   const onSubmit = async (data) => {
     try {
       await dispatch(loginUser(data)).unwrap();
+      await dispatch(fetchCurUserProfile()).unwrap();
       navigate(from, { replace: true });
     } catch (error) {
       setErr(error);
