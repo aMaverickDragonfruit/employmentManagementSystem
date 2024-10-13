@@ -17,7 +17,7 @@ export const getCurUserProfile = async () => {
     const response = await api.get(`${BASE_URL}/me`);
     return response.data;
   } catch (err) {
-    console.error('Error fetching employee profile by id:', err);
+    console.error('Error fetching current logged in user profile:', err);
     throw err;
   }
 };
