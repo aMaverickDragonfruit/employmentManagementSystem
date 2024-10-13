@@ -93,7 +93,7 @@ const EmployeeVisaStatusTable = ({ data, handleViewDoc }) => {
       requiredDocTypes.includes(doc.fileType)
     );
 
-    console.log(requiredDocuments);
+    // console.log(requiredDocuments);
 
     let status = 'Approved';
     let hasPending = false;
