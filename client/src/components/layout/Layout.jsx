@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import userSlice from '../../features/userSlice';
 import AppMenu from './Menu';
-import { fetchCurUserProfile } from '../../features/profileSlice';
+// import { fetchCurUserProfile } from '../../features/profileSlice';
 import { LoadingOutlined } from '@ant-design/icons';
 
 const layoutStyle = {
@@ -32,11 +32,11 @@ export default function MainLayout() {
     error: profileError,
   } = useSelector((state) => state.profileSlice);
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(fetchCurUserProfile());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchCurUserProfile());
+  // }, [dispatch]);
 
   return (
     <ConfigProvider
@@ -54,10 +54,7 @@ export default function MainLayout() {
               spinning={profileLoading}
               indicator={<LoadingOutlined spin />}
             >
-              <AppMenu
-                isHR={user.isHR}
-                applicationStatus={curProfile.status}
-              />
+              <AppMenu isHR={user.isHR} applicationStatus={curProfile.status} />
             </Spin>
           ) : null}
         </div>
