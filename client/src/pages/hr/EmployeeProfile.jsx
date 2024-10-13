@@ -64,7 +64,7 @@ export default function EmployeeProfile() {
       <div className='mb-10 flex flex-col'>
         {/* reject and approve btn */}
         <div className='flex justify-around'>
-          {!isReject && (
+          {selectedProfile.status === 'Pending' && !isReject && (
             <>
               <Button
                 size='large'
