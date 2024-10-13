@@ -9,7 +9,6 @@ import {
   Button,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
-import PageLayout from '../components/layout/Page';
 import {
   UploadBtn,
   FormItem,
@@ -26,13 +25,8 @@ import {
 const { Title } = Typography;
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  updateCurUserProfile,
-  updateProfileById,
-} from '../features/profileSlice';
+import { updateCurUserProfile } from '../features/profileSlice';
 import dayjs from 'dayjs';
-import { useNavigate } from 'react-router-dom';
-import TextArea from 'antd/es/input/TextArea';
 
 export default function ProfileForm({ isEditable, profile }) {
   const [form] = Form.useForm();
@@ -95,7 +89,6 @@ export default function ProfileForm({ isEditable, profile }) {
     if (!isLt2M) {
       messageApi.error('Image must be smaller than 2MB!');
       return Upload.LIST_IGNORE;
-      // return false;
     }
 
     return true;
@@ -340,29 +333,6 @@ export default function ProfileForm({ isEditable, profile }) {
     dispatch(updateCurUserProfile(data));
   };
 
-  //   const navigate = useNavigate();
-  //   const handleApprove = async () => {
-  //     const reqData = {
-  //       id: profile._id,
-  //       data: { status: 'Approved' },
-  //     };
-
-  //     await dispatch(updateProfileById(reqData)).unwrap();
-  //     navigate('/onboarding-applications');
-  //   };
-
-  //   const handleReject = async (value) => {
-  //     const reqData = {
-  //       id: profile._id,
-  //       data: { feedback: value.feedback, status: 'Rejected' },
-  //     };
-
-  //     await dispatch(updateProfileById(reqData)).unwrap();
-  //     navigate('/onboarding-applications');
-  //   };
-
-  //   const [isReject, setIsReject] = useState(false);
-
   return (
     <>
       {contextHolder}
@@ -555,7 +525,7 @@ export default function ProfileForm({ isEditable, profile }) {
           ))}
         </div>
         {/* Work Authorization */}
-        <Title>Work Authorization</Title>
+        <Title level={4}>Work Authorization</Title>
         <div style={formInputsStyle}>
           <FormItem
             key={citizenshipField.name}
@@ -638,65 +608,6 @@ export default function ProfileForm({ isEditable, profile }) {
           ></Upload>
         </Form.Item>
       </Form>
-
-      {/* {isHR && (
-        <div className='my-10 flex flex-col gap-y-6'>
-          <Title level={4}>HR Feedback</Title>
-
-          {isReject && (
-            <Form
-              name='feedback-form'
-              onFinish={handleReject}
-              autoComplete='off'
-              layout='vertical'
-              onSubmitCapture={(e) => e.preventDefault()}
-            >
-              <Form.Item
-                label='Reject Feedback'
-                name='feedback'
-                rules={[
-                  {
-                    required: true,
-                    message: 'Please enter your feedback',
-                  },
-                ]}
-              >
-                <TextArea
-                  placeholder='provide your feedback'
-                  rows={4}
-                />
-              </Form.Item>
-              <Button
-                htmlType='submit'
-                type='primary'
-                size='large'
-              >
-                Send reject feedback
-              </Button>
-            </Form>
-          )}
-
-          <div className='flex justify-around'>
-            {!isReject && (
-              <>
-                <Button
-                  size='large'
-                  onClick={() => setIsReject(true)}
-                >
-                  Reject
-                </Button>
-                <Button
-                  type='primary'
-                  size='large'
-                  onClick={handleApprove}
-                >
-                  Approve
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-      )} */}
     </>
   );
 }
