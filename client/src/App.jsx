@@ -17,6 +17,7 @@ import EmployeeProfile from './pages/hr/EmployeeProfile';
 import ProtectedAuthRoute from './components/ProtectedAuthRoute';
 import ProtectedApprovedRoute from './components/ProtectedApprovedRoute';
 import ProtectedHrRoute from './components/ProtectedHrRoute';
+import Page404 from './pages/Page404';
 
 export default function App() {
   return (
@@ -99,6 +100,7 @@ export default function App() {
             />
 
             <Route path='testing' element={<Testing />} />
+            <Route path='*' element={<Page404 />} />
           </Route>
           <Route path='/styles' element={<Styles />} />
         </Routes>
