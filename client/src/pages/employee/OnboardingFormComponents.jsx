@@ -1,4 +1,12 @@
-import { Typography, Form, Input, Select, DatePicker, Button } from 'antd';
+import {
+  Typography,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Button,
+  Steps,
+} from 'antd';
 const { RangePicker } = DatePicker;
 const { Title } = Typography;
 
@@ -456,5 +464,61 @@ export const TitleAndEdit = ({ title, handleClick }) => {
       <Title level={3}>{title}</Title>
       <Button onClick={handleClick}>Edit</Button>
     </div>
+  );
+};
+
+const StatusNew = () => {
+  return (
+    <>
+      <CheckCircleOutlined />
+    </>
+  );
+};
+
+export const ApplicationStatus = ({ applicationStatus }) => {
+  console.log(applicationStatus);
+  let current = 0;
+  let status = 'process';
+  switch (applicationStatus) {
+    case 'New':
+      current = 0;
+      break;
+    case 'Pending':
+      current = 1;
+      break;
+    case 'Approved':
+      current = 2;
+      status = 'finish';
+      break;
+    case 'Rejected':
+      current = 2;
+      status = 'error';
+      break;
+    default:
+      current = 0;
+  }
+
+  const items = [
+    {
+      title: 'Submitted',
+    },
+    {
+      title: 'HR reviewing',
+    },
+    {
+      title: 'HR approved',
+    },
+  ];
+
+  return (
+    <>
+      <Title level={4}>Application Status</Title>
+      <Steps
+        items={items}
+        current={current}
+        status={status}
+        style={{ paddingTop: '10px', paddingBottom: '20px' }}
+      />
+    </>
   );
 };
