@@ -102,7 +102,7 @@ export const ReviewFiles = ({ handleClose }) => {
   const documents = selectedProfile.documents;
   if (documents?.length > 0) {
     fileList = documents.map((document) => ({
-      uir: document._id,
+      uid: document._id,
       name: document.fileType,
       status: 'done',
       url: document.fileUrl,
