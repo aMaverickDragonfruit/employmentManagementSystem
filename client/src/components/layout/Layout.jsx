@@ -69,13 +69,7 @@ export default function MainLayout() {
             justifyContent: 'center',
           }}
         >
-          <Spin
-            spinning={loading}
-            indicator={<LoadingOutlined spin />}
-            size='large'
-          >
-            {currentPath === '/' ? <Home /> : <Outlet />}
-          </Spin>
+          {currentPath === '/' ? <Home /> : <Outlet />}
         </Content>
         <Footer />
       </Layout>
