@@ -120,8 +120,9 @@ const ProfileSchema = new Schema({
       { fileType: 'profilePicture', status: 'New' },
       { fileType: 'driverLicense', status: 'New' },
       { fileType: 'optReceipt', status: 'New' },
-      { fileType: 'i983', status: 'New' },
       { fileType: 'optEAD', status: 'New' },
+      { fileType: 'i983', status: 'New' },
+      { fileType: 'i20', status: 'New' },
     ],
   },
 });
