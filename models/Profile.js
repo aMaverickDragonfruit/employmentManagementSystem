@@ -23,7 +23,7 @@ const documentSchema = new Schema(
     fileUrl: { type: String },
     status: {
       type: String,
-      default: 'Pending',
+      default: 'New',
     },
     feedback: {
       type: String,
