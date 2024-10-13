@@ -27,14 +27,13 @@ export default function LogIn() {
 
   const from = location.state?.from?.pathname || '/';
 
-  const onSubmit = (data) => {
-    dispatch(loginUser(data)).then((action) => {
-      if (loginUser.fulfilled.match(action)) {
-        navigate(from, { replace: true });
-      } else if (loginUser.rejected.match(action)) {
-        setErr(action.payload);
-      }
-    });
+  const onSubmit = async (data) => {
+    try {
+      await dispatch(loginUser(data)).unwrap();
+      navigate(from, { replace: true });
+    } catch (error) {
+      setErr(error);
+    }
   };
 
   const onClosed = () => {
