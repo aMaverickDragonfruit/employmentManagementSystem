@@ -31,9 +31,9 @@ const OnboardingApplicationsTable = ({ data }) => {
       dataIndex: 'action',
       key: 'action',
       // is this correct ?
-      render: (_, { userId }) => (
+      render: (_, { key: profileId }) => (
         <Typography.Link
-          href={`http://localhost:3001/profiles/users/${userId}`}
+          href={`http://localhost:3001/onboarding-applications/${profileId}`}
         >
           View Application
         </Typography.Link>
@@ -44,14 +44,18 @@ const OnboardingApplicationsTable = ({ data }) => {
   const dataSource = data.map((profile) => {
     return {
       key: profile._id,
-      userId: profile.user,
       name: profile.firstName + ' ' + profile.lastName,
       email: profile.email,
       status: profile.status === 'New' ? 'Pending' : profile.status,
     };
   });
 
-  return <Table columns={columns} dataSource={dataSource}></Table>;
+  return (
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+    ></Table>
+  );
 };
 
 export default function OnboardingApplications() {
