@@ -8,13 +8,7 @@ import { fetchCurUserProfile } from '../../features/profileSlice';
 
 export const Message = ({ currentStep, curStatus, feedback }) => {
   if (curStatus === 'Pending') {
-    return (
-      <Alert
-        showIcon
-        type='info'
-        message='HR is reviewing'
-      />
-    );
+    return <Alert showIcon type='info' message='HR is reviewing' />;
   }
 
   let file = '';
@@ -33,7 +27,8 @@ export const Message = ({ currentStep, curStatus, feedback }) => {
   }
 
   const type = curStatus === 'Rejected' ? 'error' : 'warning';
-  const description = curStatus === 'Rejected' ? feedback : '';
+  const description =
+    curStatus === 'Rejected' ? `HR feedback: ${feedback}` : '';
 
   return (
     <Alert
@@ -91,11 +86,7 @@ export const VisaSteps = ({ visaDocuments }) => {
           type='success'
           showIcon
         />
-        <Steps
-          items={stepItems}
-          current={curStep}
-          status='finished'
-        />
+        <Steps items={stepItems} current={curStep} status='finished' />
       </>
     );
   }
@@ -113,11 +104,7 @@ export const VisaSteps = ({ visaDocuments }) => {
         <FileUpload curFileName={curFileName} />
       )}
       {curStep === 2 && curStatus !== 'Pending' && <I983Templates />}
-      <Steps
-        items={stepItems}
-        current={curStep}
-        status={status}
-      />
+      <Steps items={stepItems} current={curStep} status={status} />
     </>
   );
 };
@@ -204,7 +191,7 @@ const UploadForm = ({ uploadFileName }) => {
       name='visa-doc-upload'
       onFinish={onSubmit}
       onSubmitCapture={(e) => e.preventDefault()}
-      style={{ border: 'solid', minWidth: '25%', padding: '20px' }}
+      style={{ minWidth: '25%', padding: '20px' }}
     >
       {contextHolder}
       <Form.Item
@@ -214,11 +201,7 @@ const UploadForm = ({ uploadFileName }) => {
         valuePropName='fileList'
         getValueFromEvent={normFile}
       >
-        <Upload
-          {...uploadProps}
-          maxCount={1}
-          beforeUpload={beforeFileUpload}
-        >
+        <Upload {...uploadProps} maxCount={1} beforeUpload={beforeFileUpload}>
           <Button>Choose your file</Button>
         </Upload>
       </Form.Item>
