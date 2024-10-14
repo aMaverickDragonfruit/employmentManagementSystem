@@ -1,13 +1,12 @@
 import { Table, Typography } from 'antd';
-const { Title } = Typography;
 import PageLayout from '../../components/layout/Page';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfiles } from '../../features/profileSlice';
+import { useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
-import { AppSearch, AppTitle } from '../../components/components';
+import { AppSearch, AppTitle, AppSkeleton } from '../../components/components';
 import Page500 from '../Page500/';
 
 const ProfilesTable = ({ data }) => {
+  console.log(data);
   const columns = [
     {
       title: 'Name',
@@ -16,7 +15,7 @@ const ProfilesTable = ({ data }) => {
       //to be completed
       render: (_, { name, key: profileId }) => (
         <Typography.Link
-          href={`http://localhost:3001/onboarding-applications/${profileId}`}
+          href={`http://localhost:3001/employee-profiles/${profileId}`}
         >
           {name}
         </Typography.Link>
@@ -73,15 +72,8 @@ const ProfilesTable = ({ data }) => {
 };
 
 export default function EmployeeProfiles() {
-  const [filteredProfiles, setFilteredProfiles] = useState([]);
-  const dispatch = useDispatch();
-  const { profiles, curProfile, loading, error } = useSelector(
-    (state) => state.profileSlice
-  );
-
-  useEffect(() => {
-    dispatch(fetchProfiles());
-  }, [dispatch]);
+  const { profiles, error } = useSelector((state) => state.profileSlice);
+  const [filteredProfiles, setFilteredProfiles] = useState(profiles);
 
   useEffect(() => {
     setFilteredProfiles(profiles);
@@ -102,7 +94,11 @@ export default function EmployeeProfiles() {
     <PageLayout>
       <AppTitle>Employee Profiles</AppTitle>
       <AppSearch onSearch={onSearch} />
-      <ProfilesTable data={filteredProfiles} />
+      {filteredProfiles?.length === 0 ? (
+        <AppSkeleton num={3} />
+      ) : (
+        <ProfilesTable data={filteredProfiles} />
+      )}
     </PageLayout>
   );
 }

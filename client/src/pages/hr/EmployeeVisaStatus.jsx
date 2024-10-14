@@ -1,20 +1,18 @@
 import { Table, Typography, Tag, Button, message, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 import PageLayout from '../../components/layout/Page';
-const { Title } = Typography;
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfileById, fetchProfiles } from '../../features/profileSlice';
+import { fetchProfileById } from '../../features/profileSlice';
 import { useEffect, useState } from 'react';
 import { ReviewFiles, ViewAllFiles } from './EmployeeVisaStatusComponents';
 import { sendMail } from '../../api/mailer';
-import { AppSearch, AppTitle } from '../../components/components';
+import { AppSearch, AppTitle, AppSkeleton } from '../../components/components';
 import Page500 from '../Page500';
 
 const EmployeeVisaStatusTable = ({
   data,
   handleReviewDoc,
   handleSendReminder,
-  sendingReminder,
   handleViewAllDocuments,
 }) => {
   const columns = [
@@ -25,7 +23,7 @@ const EmployeeVisaStatusTable = ({
       //to be completed profiles/:id link
       render: (_, { name, key: profileId }) => (
         <Typography.Link
-          href={`http://localhost:3001/onboarding-applications/${profileId}`}
+          href={`http://localhost:3001/employee-profiles/${profileId}`}
         >
           {name}
         </Typography.Link>
@@ -95,10 +93,7 @@ const EmployeeVisaStatusTable = ({
           label = JSON.stringify(`${curFile} waiting for submission`);
         }
         return (
-          <Tag
-            color={color}
-            key={status}
-          >
+          <Tag color={color} key={status}>
             {label}
           </Tag>
         );
@@ -131,35 +126,23 @@ const EmployeeVisaStatusTable = ({
           );
         } else if (status === 'Rejected') {
           return (
-            <Spin
-              indicator={<LoadingOutlined spin />}
-              size='large'
-              spinning={sendingReminder}
+            <Button
+              key={profileId}
+              type='link'
+              onClick={() => handleSendReminder({ name, email })}
             >
-              <Button
-                key={profileId}
-                type='link'
-                onClick={() => handleSendReminder({ name, email })}
-              >
-                Send Reminder
-              </Button>
-            </Spin>
+              Send Reminder
+            </Button>
           );
         } else {
           //  new
           return (
-            <Spin
-              indicator={<LoadingOutlined spin />}
-              size='large'
-              spinning={sendingReminder}
+            <Button
+              type='link'
+              onClick={() => handleSendReminder({ name, email })}
             >
-              <Button
-                type='link'
-                onClick={() => handleSendReminder({ name, email })}
-              >
-                Send Reminder
-              </Button>
-            </Spin>
+              Send Reminder
+            </Button>
           );
         }
       },
@@ -210,21 +193,13 @@ const EmployeeVisaStatusTable = ({
 };
 
 export default function EmployeeVisaStatus() {
-  const [filteredProfiles, setFilteredProfiles] = useState([]);
+  const { profiles, error } = useSelector((state) => state.profileSlice);
+  const [filteredProfiles, setFilteredProfiles] = useState(
+    profiles.length > 0 ? profiles : []
+  );
   const [messageApi, contextHolder] = message.useMessage();
   const [sendingReminder, setSendingReminder] = useState(false);
   const dispatch = useDispatch();
-  const {
-    profiles,
-    loading: profilesLoading,
-    error,
-  } = useSelector((state) => state.profileSlice);
-
-  // console.log(profiles);
-
-  useEffect(() => {
-    dispatch(fetchProfiles());
-  }, [dispatch]);
 
   useEffect(() => {
     setFilteredProfiles(profiles);
@@ -292,17 +267,26 @@ export default function EmployeeVisaStatus() {
       {contextHolder}
       <AppTitle>Employee Visa Status</AppTitle>
       <AppSearch onSearch={onSearch} />
-      <EmployeeVisaStatusTable
-        sendingReminder={sendingReminder}
-        data={filteredProfiles}
-        handleReviewDoc={(profileId, curFile) =>
-          handleOpenDocuments(profileId, curFile)
-        }
-        handleSendReminder={(receiver) => handleSendReminder(receiver)}
-        handleViewAllDocuments={(profileId) =>
-          handleViewAllDocuments(profileId)
-        }
-      />
+      {filteredProfiles.length === 0 ? (
+        <AppSkeleton num={3} />
+      ) : (
+        <Spin
+          indicator={<LoadingOutlined />}
+          size='large'
+          spinning={sendingReminder}
+        >
+          <EmployeeVisaStatusTable
+            data={filteredProfiles}
+            handleReviewDoc={(profileId, curFile) =>
+              handleOpenDocuments(profileId, curFile)
+            }
+            handleSendReminder={(receiver) => handleSendReminder(receiver)}
+            handleViewAllDocuments={(profileId) =>
+              handleViewAllDocuments(profileId)
+            }
+          />
+        </Spin>
+      )}
 
       {/* click to show */}
       {isViewDoc && (

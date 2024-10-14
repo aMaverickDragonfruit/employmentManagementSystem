@@ -6,13 +6,17 @@ import { Provider } from 'react-redux';
 import store from './app/store.js';
 import { jwtDecode } from 'jwt-decode';
 import { setUser } from './features/userSlice.js';
-import { fetchCurUserProfile } from './features/profileSlice.js';
+import { fetchCurUserProfile, fetchProfiles } from './features/profileSlice.js';
 
 const token = localStorage.getItem('token');
 if (token) {
   const decoded = jwtDecode(token);
+  const { user } = decoded;
   store.dispatch(setUser(decoded));
   store.dispatch(fetchCurUserProfile());
+  if (user.isHR) {
+    store.dispatch(fetchProfiles());
+  }
 }
 createRoot(document.getElementById('root')).render(
   <StrictMode>
