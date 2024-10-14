@@ -8,7 +8,13 @@ import { fetchCurUserProfile } from '../../features/profileSlice';
 
 export const Message = ({ currentStep, curStatus, feedback }) => {
   if (curStatus === 'Pending') {
-    return <Alert showIcon type='info' message='HR is reviewing' />;
+    return (
+      <Alert
+        showIcon
+        type='info'
+        message='HR is reviewing'
+      />
+    );
   }
 
   let file = '';
@@ -36,7 +42,7 @@ export const Message = ({ currentStep, curStatus, feedback }) => {
       description={description}
       showIcon
       type={type}
-      style={{ width: '40%' }}
+      style={{ width: '40%', minWidth: '300px' }}
     />
   );
 };
@@ -86,7 +92,11 @@ export const VisaSteps = ({ visaDocuments }) => {
           type='success'
           showIcon
         />
-        <Steps items={stepItems} current={curStep} status='finished' />
+        <Steps
+          items={stepItems}
+          current={curStep}
+          status='finished'
+        />
       </>
     );
   }
@@ -104,7 +114,11 @@ export const VisaSteps = ({ visaDocuments }) => {
         <FileUpload curFileName={curFileName} />
       )}
       {curStep === 2 && curStatus !== 'Pending' && <I983Templates />}
-      <Steps items={stepItems} current={curStep} status={status} />
+      <Steps
+        items={stepItems}
+        current={curStep}
+        status={status}
+      />
     </>
   );
 };
@@ -201,7 +215,11 @@ const UploadForm = ({ uploadFileName }) => {
         valuePropName='fileList'
         getValueFromEvent={normFile}
       >
-        <Upload {...uploadProps} maxCount={1} beforeUpload={beforeFileUpload}>
+        <Upload
+          {...uploadProps}
+          maxCount={1}
+          beforeUpload={beforeFileUpload}
+        >
           <Button>Choose your file</Button>
         </Upload>
       </Form.Item>
