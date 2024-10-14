@@ -2,16 +2,13 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { Alert, Upload, Button, Steps, Typography, Form, message } from 'antd';
 import { useState } from 'react';
 const { Title } = Typography;
+import { updateCurUserProfileDoc } from '../../api/profile';
+import { useDispatch } from 'react-redux';
+import { fetchCurUserProfile } from '../../features/profileSlice';
 
 export const Message = ({ currentStep, curStatus, feedback }) => {
   if (curStatus === 'Pending') {
-    return (
-      <Alert
-        showIcon
-        type='info'
-        message='HR is reviewing'
-      />
-    );
+    return <Alert showIcon type='info' message='HR is reviewing' />;
   }
 
   let file = '';
@@ -43,7 +40,7 @@ export const Message = ({ currentStep, curStatus, feedback }) => {
   );
 };
 
-export const VisaSteps = ({ visaDocuments, feedback }) => {
+export const VisaSteps = ({ visaDocuments }) => {
   const stepItems = [
     {
       title: 'OPT Receipt',
@@ -59,36 +56,19 @@ export const VisaSteps = ({ visaDocuments, feedback }) => {
     },
   ];
 
-  // no visa documents uploaded yet, start uploading the EAD card
-  // if (visaDocuments.length === 1) {
-  //   return (
-  //     <>
-  //       <Alert
-  //         message='Please submit your EAD card'
-  //         showIcon
-  //         type='warning'
-  //       />
-  //       <FileUpload />
-  //       <Steps
-  //         items={stepItems}
-  //         current={1}
-  //         status='process'
-  //       />
-  //     </>
-  //   );
-  // }
-
   // have visa docs uploaded, iterate the list, to check cur status and cur step
   let curStep = 1; // review from the EAD
-  let curStatus = visaDocuments[1]?.status || '';
+  let curStatus = visaDocuments?.[1]?.status || '';
   let curFileName = '';
+  let curFeedback = '';
 
   for (let i = 1; i < visaDocuments.length; i++) {
     // if cur doc has not been approved, cannot move on next step
-    if (visaDocuments[i].status !== 'Approved') {
+    if (visaDocuments?.[i]?.status !== 'Approved') {
       curStep = i;
-      curStatus = visaDocuments[i].status;
-      curFileName = visaDocuments[i].fileName;
+      curStatus = visaDocuments?.[i]?.status;
+      curFileName = visaDocuments?.[i]?.fileType;
+      curFeedback = visaDocuments?.[i]?.feedback;
       break;
     }
     // move on next step, cur status is approved
@@ -105,11 +85,7 @@ export const VisaSteps = ({ visaDocuments, feedback }) => {
           type='success'
           showIcon
         />
-        <Steps
-          items={stepItems}
-          current={curStep}
-          status='finished'
-        />
+        <Steps items={stepItems} current={curStep} status='finished' />
       </>
     );
   }
@@ -121,17 +97,13 @@ export const VisaSteps = ({ visaDocuments, feedback }) => {
       <Message
         currentStep={curStep}
         curStatus={curStatus}
-        feedback={feedback}
+        feedback={curFeedback}
       />
       {(curStatus === 'New' || curStatus === 'Rejected') && (
         <FileUpload curFileName={curFileName} />
       )}
       {curStep === 2 && curStatus !== 'Pending' && <I983Templates />}
-      <Steps
-        items={stepItems}
-        current={curStep}
-        status={status}
-      />
+      <Steps items={stepItems} current={curStep} status={status} />
     </>
   );
 };
@@ -168,6 +140,8 @@ const UploadForm = ({ uploadFileName }) => {
     },
   };
 
+  const dispatch = useDispatch();
+
   const beforeFileUpload = (file) => {
     // console.log(file);
     // Optionally validate file type and size
@@ -185,8 +159,28 @@ const UploadForm = ({ uploadFileName }) => {
     return true;
   };
 
-  const onSubmit = (values) => {
-    console.log(values);
+  const onSubmit = async (values) => {
+    const { optEAD = null, i983 = null, i20 = null } = values;
+    let fileType,
+      fileName,
+      fileUrl = '';
+
+    if (optEAD) {
+      fileType = 'optEAD';
+      fileName = optEAD[0].originFileObj.name;
+      fileUrl = optEAD[0].response.url;
+    } else if (i983) {
+      fileType = 'i983';
+      fileName = i983[0].originFileObj.name;
+      fileUrl = i983[0].response.url;
+    } else if (i20) {
+      fileType = 'i20';
+      fileName = i20[0].originFileObj.name;
+      fileUrl = i20[0].response.url;
+    }
+
+    await updateCurUserProfileDoc({ fileType, fileName, fileUrl });
+    dispatch(fetchCurUserProfile());
   };
 
   return (
@@ -205,11 +199,7 @@ const UploadForm = ({ uploadFileName }) => {
         valuePropName='fileList'
         getValueFromEvent={normFile}
       >
-        <Upload
-          {...uploadProps}
-          maxCount={1}
-          beforeUpload={beforeFileUpload}
-        >
+        <Upload {...uploadProps} maxCount={1} beforeUpload={beforeFileUpload}>
           <Button>Choose your file</Button>
         </Upload>
       </Form.Item>
