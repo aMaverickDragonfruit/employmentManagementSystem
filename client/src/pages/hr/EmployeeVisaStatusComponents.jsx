@@ -30,7 +30,7 @@ const reviewFileFormStyle = {
   borderRadius: '4px',
   backgroundColor: 'white',
   minWidth: '500px',
-  minHeight: '560px',
+  minHeight: '460px',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
@@ -115,7 +115,7 @@ export const ReviewFiles = ({ handleClose, curVisaFile }) => {
     const fileType = curVisaFile;
     const userId = selectedProfile.user;
     let status = 'none';
-    let feedback = value.feedback ? '' : value.feedback;
+    let feedback = value.feedback ? value.feedback : 'No feedback from HR';
     if (submitAction === 'Approve') {
       status = 'Approved';
     } else if (submitAction === 'Reject') {
@@ -154,10 +154,7 @@ export const ReviewFiles = ({ handleClose, curVisaFile }) => {
             <CloseIcon onClick={handleClose} />
           </div>
           {/* file list */}
-          <Form.Item
-            name='unloadedFile'
-            label='Uploaded Files'
-          >
+          <Form.Item name='unloadedFile' label='Uploaded Files'>
             <Spin
               spinning={loading}
               indicator={<LoadingOutlined spin />}
@@ -206,19 +203,13 @@ export const ReviewFiles = ({ handleClose, curVisaFile }) => {
         <Form.Item>
           <div className='flex justify-between'>
             {submitAction ? (
-              <Button
-                type='primary'
-                htmlType='submit'
-              >
+              <Button type='primary' htmlType='submit'>
                 Submit
               </Button>
             ) : (
               <>
                 <Button onClick={handleRejectBtn}>Click to Reject</Button>
-                <Button
-                  type='primary'
-                  onClick={handleApproveBtn}
-                >
+                <Button type='primary' onClick={handleApproveBtn}>
                   Click to Approve
                 </Button>
               </>
@@ -260,10 +251,7 @@ export const ViewAllFiles = ({ handleClose }) => {
   };
 
   return (
-    <div
-      style={reviewAllFileFormStyle}
-      className='justify-start'
-    >
+    <div style={reviewAllFileFormStyle} className='justify-start'>
       <div className='flex w-full justify-between align-middle'>
         <Title level={3}>All Approved Files</Title>
         <CloseIcon onClick={handleClose} />
@@ -273,11 +261,7 @@ export const ViewAllFiles = ({ handleClose }) => {
         indicator={<LoadingOutlined spin />}
         size='large'
       >
-        <Upload
-          {...props}
-          fileList={fileList}
-          onPreview={handlePreview}
-        />
+        <Upload {...props} fileList={fileList} onPreview={handlePreview} />
         {previewImage && (
           <Image
             wrapperStyle={{
