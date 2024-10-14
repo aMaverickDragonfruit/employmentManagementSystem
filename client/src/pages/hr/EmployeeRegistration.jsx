@@ -11,6 +11,7 @@ import {
 } from '../../features/registrationSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import PageLayout from '../../components/layout/Page';
+import Page500 from '../Page500';
 
 const InvitationForm = ({ onSubmit, onClose, err }) => {
   const invitationFields = [
@@ -195,6 +196,10 @@ export default function EmployeeRegistration() {
   };
 
   // if (loading) return <p>Loading</p>;
+
+  if (error) {
+    return <Page500 message={error} />;
+  }
 
   return (
     <PageLayout>

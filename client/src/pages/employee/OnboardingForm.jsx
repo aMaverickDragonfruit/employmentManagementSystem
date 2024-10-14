@@ -30,6 +30,7 @@ import {
 } from '../../features/profileSlice';
 import dayjs from 'dayjs';
 import { commonInputProps } from './ProfileComponents';
+import Page500 from '../Page500';
 
 const formStyle = {
   // minHeight: '200px',
@@ -647,6 +648,10 @@ export default function OnboardingForm() {
 
   const applicationStatus = curProfile.status;
   const hrFeedback = curProfile.feedback;
+
+  if (error) {
+    return <Page500 message={error} />;
+  }
 
   return (
     <PageLayout>

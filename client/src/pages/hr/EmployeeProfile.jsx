@@ -8,6 +8,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import ProfileForm from '../../components/ProfileForm';
 import PageLayout from '../../components/layout/Page';
 import { Typography, Button, Form, Input } from 'antd';
+import Page500 from '../Page500';
+
 const { Title, Text } = Typography;
 const { TextArea } = Input;
 
@@ -48,14 +50,21 @@ export default function EmployeeProfile() {
     navigate('/onboarding-applications');
   };
 
+  if (error) {
+    return <Page500 message={error} />;
+  }
+
   return (
     <PageLayout>
-      <Title>{fullName} Onboarding Application</Title>
+      <Title>{fullName}</Title>
       <div className='mb-10'>
         <Text>Status: {selectedProfile.status}</Text>
       </div>
 
-      <ProfileForm isEditable={false} profile={selectedProfile} />
+      <ProfileForm
+        isEditable={false}
+        profile={selectedProfile}
+      />
 
       <Title level={4}>HR Feedback</Title>
       <div className='mb-10 flex flex-col'>
@@ -63,10 +72,17 @@ export default function EmployeeProfile() {
         <div className='flex justify-around'>
           {selectedProfile.status === 'Pending' && !isReject && (
             <>
-              <Button size='large' onClick={() => setIsReject(true)}>
+              <Button
+                size='large'
+                onClick={() => setIsReject(true)}
+              >
                 Reject
               </Button>
-              <Button type='primary' size='large' onClick={handleApprove}>
+              <Button
+                type='primary'
+                size='large'
+                onClick={handleApprove}
+              >
                 Approve
               </Button>
             </>
@@ -92,9 +108,16 @@ export default function EmployeeProfile() {
                 },
               ]}
             >
-              <TextArea placeholder='provide your feedback' rows={4} />
+              <TextArea
+                placeholder='provide your feedback'
+                rows={4}
+              />
             </Form.Item>
-            <Button htmlType='submit' type='primary' size='large'>
+            <Button
+              htmlType='submit'
+              type='primary'
+              size='large'
+            >
               Send reject feedback
             </Button>
           </Form>
