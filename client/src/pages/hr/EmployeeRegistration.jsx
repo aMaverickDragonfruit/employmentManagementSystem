@@ -1,6 +1,5 @@
-import { Typography, Button, Table, Input, Spin } from 'antd';
+import { Typography, Button, Table, message, Spin } from 'antd';
 const { Title } = Typography;
-const { Search } = Input;
 import { LoadingOutlined } from '@ant-design/icons';
 import { useState, useEffect } from 'react';
 import AuthFields from '../../components/auth/AuthFields';
@@ -12,7 +11,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import PageLayout from '../../components/layout/Page';
 import Page500 from '../Page500';
-import { AppTitle } from '../../components/components';
+import { AppTitle, AppSkeleton } from '../../components/components';
 
 const InvitationForm = ({ onSubmit, onClose, err }) => {
   const invitationFields = [
@@ -70,7 +69,7 @@ const InvitationForm = ({ onSubmit, onClose, err }) => {
   );
 };
 
-const RegistrationTable = ({ setErr, data }) => {
+const RegistrationTable = ({ setErr, data, messageApi }) => {
   const columns = [
     {
       title: 'Last Updated',
@@ -156,8 +155,16 @@ const RegistrationTable = ({ setErr, data }) => {
       await dispatch(createRegistration(data)).unwrap();
 
       await dispatch(fetchRegistrations()).unwrap();
+      messageApi.open({
+        type: 'success',
+        content: 'Reminder has been sent',
+      });
     } catch (error) {
       setErr(error);
+      messageApi.open({
+        type: 'error',
+        content: 'Sending reminder failed, Please try again later.',
+      });
     }
   };
 
@@ -174,6 +181,7 @@ const RegistrationTable = ({ setErr, data }) => {
 
 export default function EmployeeRegistration() {
   const [err, setErr] = useState(null);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const dispatch = useDispatch();
   const { registrations, loading, error } = useSelector(
@@ -199,37 +207,34 @@ export default function EmployeeRegistration() {
     setShowInvitation(false);
   };
 
-  // if (loading) return <p>Loading</p>;
-
   if (error) {
     return <Page500 message={error} />;
   }
-  // if (err) {
-  //   return <Page500 message={err} />;
-  // }
+  if (err) {
+    return <Page500 message={err} />;
+  }
 
   return (
     <PageLayout>
+      {contextHolder}
       <AppTitle>Employee Registrations</AppTitle>
       <div className='mt-10 mb-4 flex justify-between'>
         <Title level={3}>Registration History</Title>
-        <Button
-          type='primary'
-          onClick={() => setShowInvitation(true)}
-        >
+        <Button type='primary' onClick={() => setShowInvitation(true)}>
           Invite Registration
         </Button>
       </div>
-      <Spin
-        indicator={<LoadingOutlined spin />}
-        size='large'
-        spinning={loading}
-      >
-        <RegistrationTable
-          setErr={setErr}
-          data={registrations}
-        />
-      </Spin>
+      {registrations.length === 0 ? (
+        <AppSkeleton num={4} />
+      ) : (
+        <Spin indicator={<LoadingOutlined />} size='large' spinning={loading}>
+          <RegistrationTable
+            setErr={setErr}
+            data={registrations}
+            messageApi={messageApi}
+          />
+        </Spin>
+      )}
       {showInvitation && (
         <>
           <div className='absolute top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2'>
