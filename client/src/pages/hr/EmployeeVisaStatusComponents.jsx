@@ -1,5 +1,5 @@
 import PageLayout from '../../components/layout/Page';
-import { Typography, Upload, Button, Select, Input, Form, Spin } from 'antd';
+import { Typography, Upload, Button, Input, Form, Spin } from 'antd';
 const { TextArea } = Input;
 const { Title } = Typography;
 import {
@@ -8,9 +8,10 @@ import {
   LoadingOutlined,
 } from '@ant-design/icons';
 import styled from 'styled-components';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { updateProfileById } from '../../features/profileSlice';
+import { fetchProfiles } from '../../features/profileSlice';
+import { updateProfileDocStatusByUserId } from '../../api/profile';
 
 const CloseIcon = styled(CloseOutlined)`
   font-size: 150%;
@@ -35,26 +36,6 @@ const reviewFileFormStyle = {
   boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
 };
 
-const selectProps = {
-  placeholder: 'Select the comment file',
-  style: { width: '160px' },
-  size: 'middle',
-  options: [
-    {
-      value: 'optReceipt',
-      label: 'OPT Receipt',
-    },
-    {
-      value: 'i985',
-      label: 'I-985',
-    },
-    {
-      value: 'optEAD',
-      label: 'EAD',
-    },
-  ],
-};
-
 const props = {
   onChange({ file, fileList }) {
     if (file.status !== 'uploading') {
@@ -75,22 +56,19 @@ const props = {
   },
 };
 
-export const ReviewFiles = ({ handleClose }) => {
+export const ReviewFiles = ({ handleClose, curVisaFile }) => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
 
-  const [showSelect, setShowSelect] = useState(false);
   const [showFeedback, setShowFeedback] = useState(false);
   const [submitAction, setSubmitAction] = useState();
 
   const handleRejectBtn = () => {
-    setShowSelect(true);
     setShowFeedback(true);
     setSubmitAction('Reject');
   };
 
   const handleApproveBtn = () => {
-    setShowSelect(true);
     setSubmitAction('Approve');
   };
 
@@ -99,49 +77,41 @@ export const ReviewFiles = ({ handleClose }) => {
   );
 
   let fileList = [];
-  const documents = selectedProfile.documents;
-  if (documents?.length > 0) {
-    fileList = documents.map((document) => ({
-      uid: document._id,
-      name: document.fileType,
-      status: 'done',
-      url: document.fileUrl,
-    }));
+  const curReviewFile = selectedProfile?.documents?.filter(
+    (doc) => doc.fileType === curVisaFile
+  );
+  if (curReviewFile?.length > 0) {
+    fileList = [
+      {
+        uid: curReviewFile?.[0]?._id,
+        name: curReviewFile?.[0]?.fileType,
+        status: 'done',
+        url: curReviewFile?.[0]?.fileUrl,
+      },
+    ];
   }
+  // console.log(fileList);
 
-  const onSubmit = (value) => {
-    const fileTypeMap = new Map([
-      ['profilePicture', 0],
-      ['driverLicense', 1],
-      ['optReceipt', 2],
-      ['i983', 3],
-      ['optEAD', 4],
-    ]);
-    const profileId = selectedProfile._id;
-    let documents = [...selectedProfile.documents];
-    const fileIndex = fileTypeMap.get(value.fileType);
-    let updatedDocument = { ...documents[fileIndex] };
+  const onSubmit = async (value) => {
+    const fileType = curVisaFile;
+    const userId = selectedProfile.user;
+    let status = 'none';
+    let feedback = value.feedback ? '' : value.feedback;
     if (submitAction === 'Approve') {
-      updatedDocument.status = 'Approved';
-      updatedDocument.feedback = 'Great!';
-      updatedDocument.updatedAt = new Date().toISOString();
+      status = 'Approved';
     } else if (submitAction === 'Reject') {
-      updatedDocument.status = 'Rejected';
-      updatedDocument.feedback = value.feedback;
-      updatedDocument.updatedAt = new Date().toISOString();
+      status = 'Rejected';
     }
-    documents[fileIndex] = updatedDocument;
 
-    console.log(selectedProfile.documents);
-    console.log(profileId);
-    console.log(documents);
-    const reqData = {
-      id: profileId,
-      data: { documents },
-    };
+    await updateProfileDocStatusByUserId({
+      userId,
+      fileType,
+      newStatus: status,
+      feedback,
+    });
 
-    // console.log(reqData);
-    dispatch(updateProfileById(reqData));
+    dispatch(fetchProfiles());
+    handleClose();
   };
   return (
     <PageLayout>
@@ -159,8 +129,9 @@ export const ReviewFiles = ({ handleClose }) => {
             <Title level={3}>Review Files</Title>
             <CloseIcon onClick={handleClose} />
           </div>
+          {/* file list */}
           <Form.Item
-            // name='unloadedFile'
+            name='unloadedFile'
             label='Uploaded Files'
           >
             <Spin
@@ -171,25 +142,11 @@ export const ReviewFiles = ({ handleClose }) => {
               <Upload
                 {...props}
                 fileList={fileList}
-              ></Upload>
+              />
             </Spin>
           </Form.Item>
-          {/* Select file */}
-          {showSelect && (
-            <Form.Item
-              name='fileType'
-              label='Select the file'
-              rules={[
-                {
-                  required: true,
-                  message: 'Please select a file below',
-                },
-              ]}
-            >
-              <Select {...selectProps} />
-            </Form.Item>
-          )}
-          {/* Provide feedback */}
+
+          {/* feedback field */}
           {showFeedback && (
             <Form.Item
               name='feedback'
@@ -205,6 +162,8 @@ export const ReviewFiles = ({ handleClose }) => {
             </Form.Item>
           )}
         </div>
+
+        {/* Buttons */}
         <Form.Item>
           <div className='flex justify-between'>
             {submitAction ? (
@@ -229,5 +188,47 @@ export const ReviewFiles = ({ handleClose }) => {
         </Form.Item>
       </Form>
     </PageLayout>
+  );
+};
+
+const reviewAllFileFormStyle = { ...reviewFileFormStyle };
+reviewAllFileFormStyle.justifyContent = 'justify-start';
+
+export const ViewAllFiles = ({ handleClose }) => {
+  const { selectedProfile, loading, error } = useSelector(
+    (state) => state.profileSlice
+  );
+  const allDocuments = selectedProfile?.documents;
+  let fileList = [];
+
+  if (allDocuments?.length > 0) {
+    fileList = allDocuments.map((document) => ({
+      uid: document._id,
+      name: document.fileType,
+      status: 'done',
+      url: document.fileUrl,
+    }));
+  }
+
+  return (
+    <div
+      style={reviewAllFileFormStyle}
+      className='justify-start'
+    >
+      <div className='flex w-full justify-between align-middle'>
+        <Title level={3}>All Approved Files</Title>
+        <CloseIcon onClick={handleClose} />
+      </div>
+      <Spin
+        spinning={loading}
+        indicator={<LoadingOutlined spin />}
+        size='large'
+      >
+        <Upload
+          {...props}
+          fileList={fileList}
+        />
+      </Spin>
+    </div>
   );
 };
