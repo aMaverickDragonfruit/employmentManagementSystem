@@ -3,7 +3,7 @@ const { Title } = Typography;
 import PageLayout from '../../components/layout/Page';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Search from '../../components/components';
 
 const ProfilesTable = ({ data }) => {
@@ -58,6 +58,7 @@ const ProfilesTable = ({ data }) => {
 };
 
 export default function EmployeeProfiles() {
+  const [filteredProfiles, setFilteredProfiles] = useState([]);
   const dispatch = useDispatch();
   const { profiles, curProfile, loading, error } = useSelector(
     (state) => state.profileSlice
@@ -69,15 +70,24 @@ export default function EmployeeProfiles() {
     dispatch(fetchProfiles());
   }, [dispatch]);
 
+  useEffect(() => {
+    setFilteredProfiles(profiles);
+  }, [profiles]);
+
   const onSearch = (value) => {
-    console.log(value);
+    const filtered = profiles.filter((profile) =>
+      `${profile.firstName} ${profile.lastName}`
+        .toLowerCase()
+        .includes(value.toLowerCase())
+    );
+    setFilteredProfiles(filtered);
   };
 
   return (
     <PageLayout>
       <Title>Employee Profiles</Title>
       <Search onSearch={onSearch} />
-      <ProfilesTable data={profiles} />
+      <ProfilesTable data={filteredProfiles} />
     </PageLayout>
   );
 }
