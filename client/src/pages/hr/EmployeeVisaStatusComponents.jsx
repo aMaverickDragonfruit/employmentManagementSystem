@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
 import { updateProfileDocStatusByUserId } from '../../api/profile';
+import Page500 from '../Page500';
 
 const CloseIcon = styled(CloseOutlined)`
   font-size: 150%;
@@ -131,6 +132,11 @@ export const ReviewFiles = ({ handleClose, curVisaFile }) => {
     dispatch(fetchProfiles());
     handleClose();
   };
+
+  if (error) {
+    return <Page500 message={error} />;
+  }
+
   return (
     <PageLayout>
       <Form

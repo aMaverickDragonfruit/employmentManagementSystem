@@ -25,7 +25,7 @@ import {
 } from '../pages/employee/ProfileComponents';
 const { Title } = Typography;
 import { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { updateCurUserProfile } from '../features/profileSlice';
 import dayjs from 'dayjs';
 
