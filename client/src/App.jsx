@@ -67,6 +67,14 @@ export default function App() {
               }
             />
             <Route
+              path='employee-profiles/:id'
+              element={
+                <ProtectedHrRoute>
+                  <EmployeeProfile />
+                </ProtectedHrRoute>
+              }
+            />
+            <Route
               path='employee-visa-status'
               element={
                 <ProtectedHrRoute>
