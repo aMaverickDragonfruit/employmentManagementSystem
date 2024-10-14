@@ -161,7 +161,17 @@ const RegistrationTable = ({ setErr, data }) => {
     }
   };
 
-  return <Table dataSource={dataSource} columns={columns} />;
+
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+      scroll={{
+        x: 800,
+      }}
+    />
+  );
+
 };
 
 export default function EmployeeRegistration() {

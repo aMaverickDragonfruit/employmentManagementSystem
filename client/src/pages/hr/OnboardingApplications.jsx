@@ -61,7 +61,10 @@ const OnboardingApplicationsTable = ({ data }) => {
     <Table
       columns={columns}
       dataSource={dataSource}
-    ></Table>
+      scroll={{
+        x: 800,
+      }}
+    />
   );
 };
 
