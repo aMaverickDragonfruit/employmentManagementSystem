@@ -1,16 +1,20 @@
-import { Input } from 'antd';
+import { Input, Typography, Grid } from 'antd';
+const { Title } = Typography;
+const { useBreakpoint } = Grid;
 const { Search } = Input;
 
 export const AppSearchBarStyle = {
-  width: '400px',
+  maxWidth: '440px',
+  minWidth: '200px',
+  width: '40%',
   marginTop: '20px',
   marginBottom: '16px',
 };
 
-const AppSearch = ({ onSearch }) => {
+export const AppSearch = ({ onSearch }) => {
   return (
     <Search
-      placeholder='input search text'
+      placeholder='Search by name'
       onSearch={onSearch}
       size='large'
       style={AppSearchBarStyle}
@@ -18,4 +22,16 @@ const AppSearch = ({ onSearch }) => {
   );
 };
 
-export default AppSearch;
+export const AppTitle = ({ children }) => {
+  const screens = useBreakpoint();
+  let level = 1; // Default level
+
+  // Set level to 3 when screen size is medium
+  if (screens.sm && !screens.lg) {
+    level = 3;
+  } else if (screens.xs) {
+    level = 4;
+  }
+
+  return <Title level={level}>{children}</Title>;
+};
