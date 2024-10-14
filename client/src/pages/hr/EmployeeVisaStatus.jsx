@@ -7,6 +7,7 @@ import { fetchProfileById, fetchProfiles } from '../../features/profileSlice';
 import { useEffect, useState } from 'react';
 import { ReviewFiles, ViewAllFiles } from './EmployeeVisaStatusComponents';
 import { sendMail } from '../../api/mailer';
+import Search from '../../components/components';
 
 const EmployeeVisaStatusTable = ({
   data,
@@ -48,6 +49,20 @@ const EmployeeVisaStatusTable = ({
       render: (text) => {
         const date = new Date(text);
         return date.toLocaleDateString();
+      },
+    },
+    {
+      title: 'Days Remaining',
+      dataIndex: 'daysRemaining',
+      key: 'daysRemaining',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+      render: (_, { startDate, endDate }) => {
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const millisecondsDifference = end - start;
+        const days = millisecondsDifference / (1000 * 60 * 60 * 24);
+        const roundedDays = Math.round(days);
+        return roundedDays.toLocaleString();
       },
     },
     {
@@ -244,10 +259,15 @@ export default function EmployeeVisaStatus() {
     setIsViewAllDocs(false);
   };
 
+  const onSearch = (value) => {
+    console.log(value);
+  };
+
   return (
     <PageLayout>
       {contextHolder}
       <Title>Employee Visa Status</Title>
+      <Search onSearch={onSearch} />
       <EmployeeVisaStatusTable
         sendingReminder={sendingReminder}
         data={profiles}
@@ -259,6 +279,8 @@ export default function EmployeeVisaStatus() {
           handleViewAllDocuments(profileId)
         }
       />
+
+      {/* click to show */}
       {isViewDoc && (
         <>
           <div className='absolute top-1/2 left-1/2 z-50 transform -translate-x-1/2 -translate-y-1/2'>
