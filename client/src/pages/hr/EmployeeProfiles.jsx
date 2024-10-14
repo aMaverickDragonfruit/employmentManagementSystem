@@ -82,13 +82,9 @@ export default function EmployeeProfiles() {
     dispatch(fetchProfiles());
   }, [dispatch]);
 
-
-
-
   useEffect(() => {
     setFilteredProfiles(profiles);
   }, [profiles]);
-
 
   const onSearch = (value) => {
     const filtered = profiles.filter((profile) =>
@@ -98,6 +94,8 @@ export default function EmployeeProfiles() {
     );
     setFilteredProfiles(filtered);
   };
+
+  if (error) return <Page500 message={error} />;
 
   return (
     <PageLayout>
