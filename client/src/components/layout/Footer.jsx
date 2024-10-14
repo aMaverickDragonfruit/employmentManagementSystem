@@ -6,12 +6,20 @@ import {
   FacebookFilled,
 } from '@ant-design/icons';
 
-const footerStyle = {
-  backgroundColor: '#0F172A',
-  color: '#F8FAFC',
-  display: 'flex',
-  justifyContent: 'space-between',
-};
+import styled from 'styled-components';
+
+const StyledFooter = styled(Footer)`
+  background-color: #0f172a;
+  color: #f8fafc;
+  display: flex;
+  justify-content: space-between;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+`;
 
 const Options = ({ options, optionsStyle, itemsStyle }) => {
   return (
@@ -38,7 +46,7 @@ export default function AppFooter() {
   const services = ['Contact us', 'Privacy Police', 'Help'];
 
   return (
-    <Footer style={footerStyle}>
+    <StyledFooter>
       <p>@2022 All Right Reserved</p>
 
       <Options
@@ -51,6 +59,6 @@ export default function AppFooter() {
         options={services}
         optionsStyle={''}
       ></Options>
-    </Footer>
+    </StyledFooter>
   );
 }

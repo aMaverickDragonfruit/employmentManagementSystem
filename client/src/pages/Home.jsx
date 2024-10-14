@@ -4,6 +4,7 @@ const { Title } = Typography;
 import { useSelector } from 'react-redux';
 import { Navigate, useLocation } from 'react-router-dom';
 import Page500 from '../pages/Page500';
+import { AppTitle } from '../components/components';
 
 export default function Home() {
   const location = useLocation();
@@ -22,19 +23,22 @@ export default function Home() {
     return null;
   } else if (curProfile.status === 'Approved') {
     return (
-    <PageLayout>
-      <Title>Welcome to Chuwa Management</Title>
-      <img
-        src='/asset/kun.jpg'
-        alt=''
-        style={{ width: '400px', height: '400px' }}
-      />
-    </PageLayout>
-  );
+      <PageLayout>
+        <AppTitle>Welcome to Chuwa Management</AppTitle>
+        <img
+          src='/asset/kun.jpg'
+          alt=''
+          className='max-w-80 max-h-80 w-1/2 '
+        />
+      </PageLayout>
+    );
   } else {
     return (
-      <Navigate to='/onboarding-form' state={{ from: location }} replace />
+      <Navigate
+        to='/onboarding-form'
+        state={{ from: location }}
+        replace
+      />
     );
   }
-
 }

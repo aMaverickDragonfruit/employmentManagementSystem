@@ -2,6 +2,7 @@ import { Typography } from 'antd';
 import PageLayout from '../../components/layout/Page';
 import { VisaSteps } from './VisaManagementComponents';
 import { useSelector } from 'react-redux';
+import { AppTitle } from '../../components/components';
 const { Title } = Typography;
 
 export default function VisaManagement() {
@@ -12,7 +13,7 @@ export default function VisaManagement() {
   return (
     <PageLayout>
       <div className='flex flex-col gap-10'>
-        <Title>Visa Management</Title>
+        <AppTitle>Visa Management</AppTitle>
         <VisaSteps visaDocuments={userDocuments} />
       </div>
     </PageLayout>

@@ -31,6 +31,7 @@ import {
 import dayjs from 'dayjs';
 import { commonInputProps } from './ProfileComponents';
 import Page500 from '../Page500';
+import { AppTitle } from '../../components/components';
 
 const formStyle = {
   // minHeight: '200px',
@@ -656,7 +657,7 @@ export default function OnboardingForm() {
   return (
     <PageLayout>
       {contextHolder}
-      <Title>Onboarding Form</Title>
+      <AppTitle>Onboarding Form</AppTitle>
 
       <ApplicationStatus applicationStatus={applicationStatus} />
       {applicationStatus === 'Rejected' && (

@@ -7,7 +7,7 @@ import { fetchProfileById, fetchProfiles } from '../../features/profileSlice';
 import { useEffect, useState } from 'react';
 import { ReviewFiles, ViewAllFiles } from './EmployeeVisaStatusComponents';
 import { sendMail } from '../../api/mailer';
-import Search from '../../components/components';
+import { AppSearch, AppTitle } from '../../components/components';
 import Page500 from '../Page500';
 
 const EmployeeVisaStatusTable = ({
@@ -290,8 +290,8 @@ export default function EmployeeVisaStatus() {
   return (
     <PageLayout>
       {contextHolder}
-      <Title>Employee Visa Status</Title>
-      <Search onSearch={onSearch} />
+      <AppTitle>Employee Visa Status</AppTitle>
+      <AppSearch onSearch={onSearch} />
       <EmployeeVisaStatusTable
         sendingReminder={sendingReminder}
         data={filteredProfiles}

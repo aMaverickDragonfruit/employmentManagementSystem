@@ -9,6 +9,7 @@ import ProfileForm from '../../components/ProfileForm';
 import PageLayout from '../../components/layout/Page';
 import { Typography, Button, Form, Input } from 'antd';
 import Page500 from '../Page500';
+import { AppTitle } from '../../components/components';
 
 const { Title, Text } = Typography;
 const { TextArea } = Input;
@@ -56,7 +57,7 @@ export default function EmployeeProfile() {
 
   return (
     <PageLayout>
-      <Title>{fullName}</Title>
+      <AppTitle>{fullName}</AppTitle>
       <div className='mb-10'>
         <Text>Status: {selectedProfile.status}</Text>
       </div>
