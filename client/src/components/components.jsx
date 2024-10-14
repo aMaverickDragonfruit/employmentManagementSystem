@@ -1,9 +1,9 @@
-import { Input, Typography, Grid } from 'antd';
+import { Input, Typography, Grid, Skeleton } from 'antd';
 const { Title } = Typography;
 const { useBreakpoint } = Grid;
 const { Search } = Input;
 
-export const AppSearchBarStyle = {
+const AppSearchBarStyle = {
   maxWidth: '440px',
   minWidth: '200px',
   width: '40%',
@@ -34,4 +34,14 @@ export const AppTitle = ({ children }) => {
   }
 
   return <Title level={level}>{children}</Title>;
+};
+
+export const AppSkeleton = ({ num }) => {
+  return (
+    <div>
+      {Array.from({ length: num }, (_, index) => (
+        <Skeleton key={index} active />
+      ))}
+    </div>
+  );
 };
