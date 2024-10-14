@@ -1,11 +1,8 @@
 import { Typography, Table } from 'antd';
 import PageLayout from '../../components/layout/Page';
-const { Title } = Typography;
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchProfiles } from '../../features/profileSlice';
-import { useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Page500 from '../Page500';
-import { AppTitle } from '../../components/components';
+import { AppTitle, AppSkeleton } from '../../components/components';
 
 const OnboardingApplicationsTable = ({ data }) => {
   const columns = [
@@ -70,14 +67,8 @@ const OnboardingApplicationsTable = ({ data }) => {
 };
 
 export default function OnboardingApplications() {
-  const dispatch = useDispatch();
-  const { profiles, loading, error } = useSelector(
-    (state) => state.profileSlice
-  );
-
-  useEffect(() => {
-    dispatch(fetchProfiles());
-  }, [dispatch]);
+  // const dispatch = useDispatch();
+  const { profiles, error } = useSelector((state) => state.profileSlice);
 
   if (error) {
     return <Page500 message={error} />;
@@ -86,7 +77,11 @@ export default function OnboardingApplications() {
   return (
     <PageLayout>
       <AppTitle>Onboarding Applications</AppTitle>
-      <OnboardingApplicationsTable data={profiles} />
+      {profiles.length === 0 ? (
+        <AppSkeleton num={3} />
+      ) : (
+        <OnboardingApplicationsTable data={profiles} />
+      )}
     </PageLayout>
   );
 }
