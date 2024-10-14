@@ -95,10 +95,7 @@ const EmployeeVisaStatusTable = ({
           label = JSON.stringify(`${curFile} waiting for submission`);
         }
         return (
-          <Tag
-            color={color}
-            key={status}
-          >
+          <Tag color={color} key={status}>
             {label}
           </Tag>
         );
@@ -198,15 +195,11 @@ const EmployeeVisaStatusTable = ({
     };
   });
 
-  return (
-    <Table
-      columns={columns}
-      dataSource={dataSource}
-    ></Table>
-  );
+  return <Table columns={columns} dataSource={dataSource}></Table>;
 };
 
 export default function EmployeeVisaStatus() {
+  const [filteredProfiles, setFilteredProfiles] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [sendingReminder, setSendingReminder] = useState(false);
   const dispatch = useDispatch();
@@ -221,6 +214,10 @@ export default function EmployeeVisaStatus() {
   useEffect(() => {
     dispatch(fetchProfiles());
   }, [dispatch]);
+
+  useEffect(() => {
+    setFilteredProfiles(profiles);
+  }, [profiles]);
 
   const [isViewDoc, setIsViewDoc] = useState(false);
   const [curVisaFile, setCurVisaFile] = useState('');
@@ -267,7 +264,12 @@ export default function EmployeeVisaStatus() {
   };
 
   const onSearch = (value) => {
-    console.log(value);
+    const filtered = profiles.filter((profile) =>
+      `${profile.firstName} ${profile.lastName}`
+        .toLowerCase()
+        .includes(value.toLowerCase())
+    );
+    setFilteredProfiles(filtered);
   };
 
   if (error) {
@@ -281,7 +283,7 @@ export default function EmployeeVisaStatus() {
       <Search onSearch={onSearch} />
       <EmployeeVisaStatusTable
         sendingReminder={sendingReminder}
-        data={profiles}
+        data={filteredProfiles}
         handleReviewDoc={(profileId, curFile) =>
           handleOpenDocuments(profileId, curFile)
         }

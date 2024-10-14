@@ -291,7 +291,7 @@ export default function ProfileForm({ isEditable, profile }) {
         ];
       };
 
-      initialValues.uploadedFiles = documents.map((document) => ({
+      initialValues.uploadedFiles = documents.slice(0, 3).map((document) => ({
         uid: document._id,
         name: document.fileType,
         fileStatus: document.status,
@@ -486,10 +486,7 @@ export default function ProfileForm({ isEditable, profile }) {
         <Title level={4}>Personal Information</Title>
         <div style={formInputsStyle}>
           {personalInfoFieldsOne.map((field) => (
-            <FormItem
-              key={field.name}
-              field={field}
-            />
+            <FormItem key={field.name} field={field} />
           ))}
         </div>
         <div style={formInputsStyle}>
@@ -557,10 +554,7 @@ export default function ProfileForm({ isEditable, profile }) {
             ]}
           >
             <Upload {...uploadProps}>
-              <Button
-                icon={<UploadOutlined />}
-                {...commonInputProps}
-              >
+              <Button icon={<UploadOutlined />} {...commonInputProps}>
                 Click to Upload
               </Button>
             </Upload>
@@ -589,43 +583,24 @@ export default function ProfileForm({ isEditable, profile }) {
               },
             ]}
           >
-            <Input
-              {...commonInputProps}
-              placeholder='Phone'
-            />
+            <Input {...commonInputProps} placeholder='Phone' />
           </Form.Item>
-          <Form.Item
-            name='email'
-            label='Email'
-            key='email'
-          >
-            <Input
-              {...commonInputProps}
-              disabled
-            />
+          <Form.Item name='email' label='Email' key='email'>
+            <Input {...commonInputProps} disabled />
           </Form.Item>
         </div>
         <Title level={4}>Address</Title>
         <div style={formInputsStyle}>
           {addressFields.map((field) => (
-            <FormItem
-              key={field.name}
-              field={field}
-            />
+            <FormItem key={field.name} field={field} />
           ))}
         </div>
         {/* Work Authorization */}
         <Title level={4}>Work Authorization</Title>
         <div style={formInputsStyle}>
-          <FormItem
-            key={citizenshipField.name}
-            field={citizenshipField}
-          />
+          <FormItem key={citizenshipField.name} field={citizenshipField} />
           {citizenship === 'others' && (
-            <FormItem
-              key={workVisaField.name}
-              field={workVisaField}
-            />
+            <FormItem key={workVisaField.name} field={workVisaField} />
           )}
           {citizenship === 'others' && workVisa === 'F1' && (
             <Form.Item
@@ -641,24 +616,15 @@ export default function ProfileForm({ isEditable, profile }) {
                 },
               ]}
             >
-              <Upload
-                {...uploadProps}
-                beforeUpload={beforeOPTReceiptUpload}
-              >
-                <Button
-                  icon={<UploadOutlined />}
-                  size='large'
-                >
+              <Upload {...uploadProps} beforeUpload={beforeOPTReceiptUpload}>
+                <Button icon={<UploadOutlined />} size='large'>
                   Click to Upload your OPT receipt
                 </Button>
               </Upload>
             </Form.Item>
           )}
           {citizenship === 'others' && workVisa === 'others' && (
-            <FormItem
-              key={visaInputField.name}
-              field={visaInputField}
-            />
+            <FormItem key={visaInputField.name} field={visaInputField} />
           )}
           {citizenship === 'others' && (
             <FormItem
@@ -692,11 +658,7 @@ export default function ProfileForm({ isEditable, profile }) {
           key='uploaded files'
           valuePropName='fileList'
         >
-          <Upload
-            {...uploadProps}
-            disabled
-            onPreview={handlePreview}
-          />
+          <Upload {...uploadProps} disabled onPreview={handlePreview} />
         </Form.Item>
         {previewImage && (
           <Image
