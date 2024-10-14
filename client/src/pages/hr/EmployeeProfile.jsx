@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import ProfileForm from '../../components/ProfileForm';
 import PageLayout from '../../components/layout/Page';
-import { Typography, Button, Form, Input } from 'antd';
+import { Typography, Button, Form, Input, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import Page500 from '../Page500';
 import { AppTitle } from '../../components/components';
 
@@ -21,7 +22,7 @@ export default function EmployeeProfile() {
     (state) => state.profileSlice
   );
 
-  const { firstName, lastName } = selectedProfile;
+  const { firstName = '', lastName = 'Loading...' } = selectedProfile;
   const fullName = `${firstName} ${lastName}`;
 
   useEffect(() => {
@@ -57,73 +58,63 @@ export default function EmployeeProfile() {
 
   return (
     <PageLayout>
-      <AppTitle>{fullName}</AppTitle>
-      <div className='mb-10'>
-        <Text>Status: {selectedProfile.status}</Text>
-      </div>
+      <Spin
+        spinning={loading}
+        indicator={<LoadingOutlined spin />}
+        size='large'
+      >
+        <AppTitle>{fullName}</AppTitle>
 
-      <ProfileForm
-        isEditable={false}
-        profile={selectedProfile}
-      />
-
-      <Title level={4}>HR Feedback</Title>
-      <div className='mb-10 flex flex-col'>
-        {/* reject and approve btn */}
-        <div className='flex justify-around'>
-          {selectedProfile.status === 'Pending' && !isReject && (
-            <>
-              <Button
-                size='large'
-                onClick={() => setIsReject(true)}
-              >
-                Reject
-              </Button>
-              <Button
-                type='primary'
-                size='large'
-                onClick={handleApprove}
-              >
-                Approve
-              </Button>
-            </>
-          )}
+        <div className='mb-10'>
+          <Text>Status: {selectedProfile.status}</Text>
         </div>
 
-        {/* Reject employee application form */}
-        {isReject && (
-          <Form
-            name='feedback-form'
-            onFinish={handleReject}
-            autoComplete='off'
-            layout='vertical'
-            onSubmitCapture={(e) => e.preventDefault()}
-          >
-            <Form.Item
-              label='Reject Feedback'
-              name='feedback'
-              rules={[
-                {
-                  required: true,
-                  message: 'Please enter your feedback',
-                },
-              ]}
+        <ProfileForm isEditable={false} profile={selectedProfile} />
+
+        <Title level={4}>HR Feedback</Title>
+        <div className='mb-10 flex flex-col'>
+          {/* reject and approve btn */}
+          <div className='flex justify-around'>
+            {selectedProfile.status === 'Pending' && !isReject && (
+              <>
+                <Button size='large' onClick={() => setIsReject(true)}>
+                  Reject
+                </Button>
+                <Button type='primary' size='large' onClick={handleApprove}>
+                  Approve
+                </Button>
+              </>
+            )}
+          </div>
+
+          {/* Reject employee application form */}
+          {isReject && (
+            <Form
+              name='feedback-form'
+              onFinish={handleReject}
+              autoComplete='off'
+              layout='vertical'
+              onSubmitCapture={(e) => e.preventDefault()}
             >
-              <TextArea
-                placeholder='provide your feedback'
-                rows={4}
-              />
-            </Form.Item>
-            <Button
-              htmlType='submit'
-              type='primary'
-              size='large'
-            >
-              Send reject feedback
-            </Button>
-          </Form>
-        )}
-      </div>
+              <Form.Item
+                label='Reject Feedback'
+                name='feedback'
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please enter your feedback',
+                  },
+                ]}
+              >
+                <TextArea placeholder='provide your feedback' rows={4} />
+              </Form.Item>
+              <Button htmlType='submit' type='primary' size='large'>
+                Send reject feedback
+              </Button>
+            </Form>
+          )}
+        </div>
+      </Spin>
     </PageLayout>
   );
 }
