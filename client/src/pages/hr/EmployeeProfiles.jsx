@@ -4,7 +4,7 @@ import PageLayout from '../../components/layout/Page';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
 import { useEffect, useState } from 'react';
-import Search from '../../components/components';
+import { AppSearch, AppTitle } from '../../components/components';
 import Page500 from '../Page500/';
 
 const ProfilesTable = ({ data }) => {
@@ -65,6 +65,9 @@ const ProfilesTable = ({ data }) => {
     <Table
       dataSource={dataSource}
       columns={columns}
+      scroll={{
+        x: 800,
+      }}
     />
   );
 };
@@ -75,8 +78,6 @@ export default function EmployeeProfiles() {
   const { profiles, curProfile, loading, error } = useSelector(
     (state) => state.profileSlice
   );
-
-  // console.log(profiles);
 
   useEffect(() => {
     dispatch(fetchProfiles());
@@ -99,14 +100,9 @@ export default function EmployeeProfiles() {
 
   return (
     <PageLayout>
-      <Title>Employee Profiles</Title>
-      <Search onSearch={onSearch} />
-      <ProfilesTable
-        data={filteredProfiles}
-        scroll={{
-          x: 800,
-        }}
-      />
+      <AppTitle>Employee Profiles</AppTitle>
+      <AppSearch onSearch={onSearch} />
+      <ProfilesTable data={filteredProfiles} />
     </PageLayout>
   );
 }

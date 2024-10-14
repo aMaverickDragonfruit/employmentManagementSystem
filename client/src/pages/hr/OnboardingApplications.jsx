@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
 import { useEffect } from 'react';
 import Page500 from '../Page500';
+import { AppTitle } from '../../components/components';
 
 const OnboardingApplicationsTable = ({ data }) => {
   const columns = [
@@ -84,7 +85,7 @@ export default function OnboardingApplications() {
 
   return (
     <PageLayout>
-      <Title>Onboarding Applications</Title>
+      <AppTitle>Onboarding Applications</AppTitle>
       <OnboardingApplicationsTable data={profiles} />
     </PageLayout>
   );
