@@ -100,6 +100,16 @@ export const ReviewFiles = ({ handleClose, curVisaFile }) => {
   }
   // console.log(fileList);
 
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+
   const onSubmit = async (value) => {
     const fileType = curVisaFile;
     const userId = selectedProfile.user;
@@ -150,7 +160,22 @@ export const ReviewFiles = ({ handleClose, curVisaFile }) => {
               <Upload
                 {...props}
                 fileList={fileList}
+                onPreview={handlePreview}
               />
+              {previewImage && (
+                <Image
+                  wrapperStyle={{
+                    display: 'none',
+                  }}
+                  preview={{
+                    visible: previewOpen,
+                    onVisibleChange: (visible) => setPreviewOpen(visible),
+                    afterOpenChange: (visible) =>
+                      !visible && setPreviewImage(''),
+                  }}
+                  src={previewImage}
+                />
+              )}
             </Spin>
           </Form.Item>
 

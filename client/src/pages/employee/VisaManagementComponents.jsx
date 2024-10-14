@@ -8,7 +8,13 @@ import { fetchCurUserProfile } from '../../features/profileSlice';
 
 export const Message = ({ currentStep, curStatus, feedback }) => {
   if (curStatus === 'Pending') {
-    return <Alert showIcon type='info' message='HR is reviewing' />;
+    return (
+      <Alert
+        showIcon
+        type='info'
+        message='HR is reviewing'
+      />
+    );
   }
 
   let file = '';
@@ -85,7 +91,11 @@ export const VisaSteps = ({ visaDocuments }) => {
           type='success'
           showIcon
         />
-        <Steps items={stepItems} current={curStep} status='finished' />
+        <Steps
+          items={stepItems}
+          current={curStep}
+          status='finished'
+        />
       </>
     );
   }
@@ -103,7 +113,11 @@ export const VisaSteps = ({ visaDocuments }) => {
         <FileUpload curFileName={curFileName} />
       )}
       {curStep === 2 && curStatus !== 'Pending' && <I983Templates />}
-      <Steps items={stepItems} current={curStep} status={status} />
+      <Steps
+        items={stepItems}
+        current={curStep}
+        status={status}
+      />
     </>
   );
 };
@@ -143,17 +157,18 @@ const UploadForm = ({ uploadFileName }) => {
   const dispatch = useDispatch();
 
   const beforeFileUpload = (file) => {
-    // console.log(file);
+    console.log(file);
     // Optionally validate file type and size
-    const isPdf = file.type.startsWith('application/pdf');
-    if (!isPdf) {
-      messageApi.error('You can only upload pdf files!');
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      messageApi.error('You can only upload image files!');
       return Upload.LIST_IGNORE;
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
       messageApi.error('Image must be smaller than 2MB!');
       return Upload.LIST_IGNORE;
+      // return false;
     }
 
     return true;
@@ -199,7 +214,11 @@ const UploadForm = ({ uploadFileName }) => {
         valuePropName='fileList'
         getValueFromEvent={normFile}
       >
-        <Upload {...uploadProps} maxCount={1} beforeUpload={beforeFileUpload}>
+        <Upload
+          {...uploadProps}
+          maxCount={1}
+          beforeUpload={beforeFileUpload}
+        >
           <Button>Choose your file</Button>
         </Upload>
       </Form.Item>

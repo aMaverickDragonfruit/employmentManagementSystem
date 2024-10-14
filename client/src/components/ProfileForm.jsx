@@ -7,6 +7,7 @@ import {
   DatePicker,
   Input,
   Button,
+  Image,
 } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import {
@@ -27,6 +28,14 @@ import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateCurUserProfile } from '../features/profileSlice';
 import dayjs from 'dayjs';
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 export default function ProfileForm({ isEditable, profile }) {
   const [form] = Form.useForm();
@@ -77,21 +86,45 @@ export default function ProfileForm({ isEditable, profile }) {
     return true;
   };
 
+  // changed for demo
   const beforeOPTReceiptUpload = (file) => {
     // console.log(file);
     // Optionally validate file type and size
-    const isPdf = file.type.startsWith('application/pdf');
-    if (!isPdf) {
-      messageApi.error('You can only upload pdf files!');
+    // const isPdf = file.type.startsWith('application/pdf');
+    // if (!isPdf) {
+    //   messageApi.error('You can only upload pdf files!');
+    //   return Upload.LIST_IGNORE;
+    // }
+    // const isLt2M = file.size / 1024 / 1024 < 2;
+    // if (!isLt2M) {
+    //   messageApi.error('Image must be smaller than 2MB!');
+    //   return Upload.LIST_IGNORE;
+    // }
+
+    // return true;
+    const isImage = file.type.startsWith('image/');
+    if (!isImage) {
+      messageApi.error('You can only upload image files!');
       return Upload.LIST_IGNORE;
     }
     const isLt2M = file.size / 1024 / 1024 < 2;
     if (!isLt2M) {
       messageApi.error('Image must be smaller than 2MB!');
       return Upload.LIST_IGNORE;
+      // return false;
     }
 
     return true;
+  };
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
   };
 
   // for work authorization fields
@@ -453,7 +486,10 @@ export default function ProfileForm({ isEditable, profile }) {
         <Title level={4}>Personal Information</Title>
         <div style={formInputsStyle}>
           {personalInfoFieldsOne.map((field) => (
-            <FormItem key={field.name} field={field} />
+            <FormItem
+              key={field.name}
+              field={field}
+            />
           ))}
         </div>
         <div style={formInputsStyle}>
@@ -521,7 +557,10 @@ export default function ProfileForm({ isEditable, profile }) {
             ]}
           >
             <Upload {...uploadProps}>
-              <Button icon={<UploadOutlined />} {...commonInputProps}>
+              <Button
+                icon={<UploadOutlined />}
+                {...commonInputProps}
+              >
                 Click to Upload
               </Button>
             </Upload>
@@ -550,24 +589,43 @@ export default function ProfileForm({ isEditable, profile }) {
               },
             ]}
           >
-            <Input {...commonInputProps} placeholder='Phone' />
+            <Input
+              {...commonInputProps}
+              placeholder='Phone'
+            />
           </Form.Item>
-          <Form.Item name='email' label='Email' key='email'>
-            <Input {...commonInputProps} disabled />
+          <Form.Item
+            name='email'
+            label='Email'
+            key='email'
+          >
+            <Input
+              {...commonInputProps}
+              disabled
+            />
           </Form.Item>
         </div>
         <Title level={4}>Address</Title>
         <div style={formInputsStyle}>
           {addressFields.map((field) => (
-            <FormItem key={field.name} field={field} />
+            <FormItem
+              key={field.name}
+              field={field}
+            />
           ))}
         </div>
         {/* Work Authorization */}
         <Title level={4}>Work Authorization</Title>
         <div style={formInputsStyle}>
-          <FormItem key={citizenshipField.name} field={citizenshipField} />
+          <FormItem
+            key={citizenshipField.name}
+            field={citizenshipField}
+          />
           {citizenship === 'others' && (
-            <FormItem key={workVisaField.name} field={workVisaField} />
+            <FormItem
+              key={workVisaField.name}
+              field={workVisaField}
+            />
           )}
           {citizenship === 'others' && workVisa === 'F1' && (
             <Form.Item
@@ -583,15 +641,24 @@ export default function ProfileForm({ isEditable, profile }) {
                 },
               ]}
             >
-              <Upload {...uploadProps} beforeUpload={beforeOPTReceiptUpload}>
-                <Button icon={<UploadOutlined />} size='large'>
+              <Upload
+                {...uploadProps}
+                beforeUpload={beforeOPTReceiptUpload}
+              >
+                <Button
+                  icon={<UploadOutlined />}
+                  size='large'
+                >
                   Click to Upload your OPT receipt
                 </Button>
               </Upload>
             </Form.Item>
           )}
           {citizenship === 'others' && workVisa === 'others' && (
-            <FormItem key={visaInputField.name} field={visaInputField} />
+            <FormItem
+              key={visaInputField.name}
+              field={visaInputField}
+            />
           )}
           {citizenship === 'others' && (
             <FormItem
@@ -625,8 +692,25 @@ export default function ProfileForm({ isEditable, profile }) {
           key='uploaded files'
           valuePropName='fileList'
         >
-          <Upload {...uploadProps} disabled></Upload>
+          <Upload
+            {...uploadProps}
+            disabled
+            onPreview={handlePreview}
+          />
         </Form.Item>
+        {previewImage && (
+          <Image
+            wrapperStyle={{
+              display: 'none',
+            }}
+            preview={{
+              visible: previewOpen,
+              onVisibleChange: (visible) => setPreviewOpen(visible),
+              afterOpenChange: (visible) => !visible && setPreviewImage(''),
+            }}
+            src={previewImage}
+          />
+        )}
       </Form>
     </>
   );
