@@ -4,6 +4,7 @@ const { Title } = Typography;
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
 import { useEffect } from 'react';
+import Page500 from '../Page500';
 
 const OnboardingApplicationsTable = ({ data }) => {
   const columns = [
@@ -11,7 +12,13 @@ const OnboardingApplicationsTable = ({ data }) => {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
-      render: (_, record) => <Typography.Link>{record.name}</Typography.Link>,
+      render: (_, { name, key: profileId }) => (
+        <Typography.Link
+          href={`http://localhost:3001/onboarding-applications/${profileId}`}
+        >
+          {name}
+        </Typography.Link>
+      ),
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
@@ -60,13 +67,17 @@ const OnboardingApplicationsTable = ({ data }) => {
 
 export default function OnboardingApplications() {
   const dispatch = useDispatch();
-  const { profiles, curProfile, loading, error } = useSelector(
+  const { profiles, loading, error } = useSelector(
     (state) => state.profileSlice
   );
 
   useEffect(() => {
     dispatch(fetchProfiles());
   }, [dispatch]);
+
+  if (error) {
+    return <Page500 message={error} />;
+  }
 
   return (
     <PageLayout>

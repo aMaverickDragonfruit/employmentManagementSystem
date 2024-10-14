@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProfiles } from '../../features/profileSlice';
 import { useEffect } from 'react';
 import Search from '../../components/components';
+import Page500 from '../Page500/';
 
 const ProfilesTable = ({ data }) => {
   const columns = [
@@ -13,7 +14,13 @@ const ProfilesTable = ({ data }) => {
       dataIndex: 'name',
       key: 'name',
       //to be completed
-      render: (_, record) => <Typography.Link>{record.name}</Typography.Link>,
+      render: (_, { name, key: profileId }) => (
+        <Typography.Link
+          href={`http://localhost:3001/onboarding-applications/${profileId}`}
+        >
+          {name}
+        </Typography.Link>
+      ),
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
@@ -54,7 +61,12 @@ const ProfilesTable = ({ data }) => {
     };
   });
 
-  return <Table dataSource={dataSource} columns={columns} />;
+  return (
+    <Table
+      dataSource={dataSource}
+      columns={columns}
+    />
+  );
 };
 
 export default function EmployeeProfiles() {
@@ -68,6 +80,10 @@ export default function EmployeeProfiles() {
   useEffect(() => {
     dispatch(fetchProfiles());
   }, [dispatch]);
+
+  if (error) {
+    return <Page500 message={error} />;
+  }
 
   const onSearch = (value) => {
     console.log(value);

@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { ReviewFiles, ViewAllFiles } from './EmployeeVisaStatusComponents';
 import { sendMail } from '../../api/mailer';
 import Search from '../../components/components';
+import Page500 from '../Page500';
 
 const EmployeeVisaStatusTable = ({
   data,
@@ -22,7 +23,13 @@ const EmployeeVisaStatusTable = ({
       dataIndex: 'name',
       key: 'name',
       //to be completed profiles/:id link
-      render: (_, record) => <Typography.Link>{record.name}</Typography.Link>,
+      render: (_, { name, key: profileId }) => (
+        <Typography.Link
+          href={`http://localhost:3001/onboarding-applications/${profileId}`}
+        >
+          {name}
+        </Typography.Link>
+      ),
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
@@ -262,6 +269,10 @@ export default function EmployeeVisaStatus() {
   const onSearch = (value) => {
     console.log(value);
   };
+
+  if (error) {
+    return <Page500 message={error} />;
+  }
 
   return (
     <PageLayout>
