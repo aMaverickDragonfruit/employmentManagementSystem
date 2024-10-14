@@ -1,6 +1,7 @@
 import { Typography, Button, Table, Input, Spin } from 'antd';
 const { Title } = Typography;
 const { Search } = Input;
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useState, useEffect } from 'react';
 import AuthFields from '../../components/auth/AuthFields';
@@ -160,6 +161,7 @@ const RegistrationTable = ({ setErr, data }) => {
     }
   };
 
+
   return (
     <Table
       dataSource={dataSource}
@@ -169,6 +171,7 @@ const RegistrationTable = ({ setErr, data }) => {
       }}
     />
   );
+
 };
 
 export default function EmployeeRegistration() {
@@ -203,24 +206,25 @@ export default function EmployeeRegistration() {
   if (error) {
     return <Page500 message={error} />;
   }
+  // if (err) {
+  //   return <Page500 message={err} />;
+  // }
 
   return (
     <PageLayout>
       <Title>Employee Registrations</Title>
       <div className='mt-10 mb-4 flex justify-between'>
         <Title level={3}>Registration History</Title>
-        <Button
-          type='primary'
-          onClick={() => setShowInvitation(true)}
-        >
+        <Button type='primary' onClick={() => setShowInvitation(true)}>
           Invite Registration
         </Button>
       </div>
-      <Spin spinning={loading}>
-        <RegistrationTable
-          setErr={setErr}
-          data={registrations}
-        />
+      <Spin
+        indicator={<LoadingOutlined spin />}
+        size='large'
+        spinning={loading}
+      >
+        <RegistrationTable setErr={setErr} data={registrations} />
       </Spin>
       {showInvitation && (
         <>
