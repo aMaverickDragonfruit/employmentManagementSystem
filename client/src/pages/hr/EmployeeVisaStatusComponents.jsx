@@ -1,5 +1,5 @@
 import PageLayout from '../../components/layout/Page';
-import { Typography, Upload, Button, Input, Form, Spin } from 'antd';
+import { Typography, Upload, Button, Input, Form, Spin, Image } from 'antd';
 const { TextArea } = Input;
 const { Title } = Typography;
 import {
@@ -35,6 +35,14 @@ const reviewFileFormStyle = {
   justifyContent: 'space-between',
   boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)',
 };
+
+const getBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = (error) => reject(error);
+  });
 
 const props = {
   onChange({ file, fileList }) {
@@ -210,6 +218,16 @@ export const ViewAllFiles = ({ handleClose }) => {
     }));
   }
 
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+  const handlePreview = async (file) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj);
+    }
+    setPreviewImage(file.url || file.preview);
+    setPreviewOpen(true);
+  };
+
   return (
     <div
       style={reviewAllFileFormStyle}
@@ -227,7 +245,21 @@ export const ViewAllFiles = ({ handleClose }) => {
         <Upload
           {...props}
           fileList={fileList}
+          onPreview={handlePreview}
         />
+        {previewImage && (
+          <Image
+            wrapperStyle={{
+              display: 'none',
+            }}
+            preview={{
+              visible: previewOpen,
+              onVisibleChange: (visible) => setPreviewOpen(visible),
+              afterOpenChange: (visible) => !visible && setPreviewImage(''),
+            }}
+            src={previewImage}
+          />
+        )}
       </Spin>
     </div>
   );
