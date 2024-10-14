@@ -268,6 +268,16 @@ export const referralAndEmergencyFields = [
         required: true,
         message: 'Please enter the phone number',
       },
+      {
+        validator: (_, value) => {
+          const phonePattern =
+            /^(\+1\s?)?(\([0-9]{3}\)|[0-9]{3})[\s.-]?[0-9]{3}[\s.-]?[0-9]{4}$/;
+          if (value && phonePattern.test(value)) {
+            return Promise.resolve();
+          }
+          return Promise.reject(new Error('Invalid US phone number'));
+        },
+      },
     ],
   },
   {
@@ -391,7 +401,10 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
       {(fields, { add, remove }, { errors }) => (
         <>
           {fields.map(({ key, name }) => (
-            <div className='flex' key={key}>
+            <div
+              className='flex'
+              key={key}
+            >
               {inputFields.map((field) => (
                 <Form.Item
                   label={field.placeholder}
@@ -399,7 +412,10 @@ export const FormList = ({ listName, inputFields, isReferral }) => {
                   name={[name, field.name]}
                   rules={field.rules}
                 >
-                  <Input placeholder={field.placeholder} size='large' />
+                  <Input
+                    placeholder={field.placeholder}
+                    size='large'
+                  />
                 </Form.Item>
               ))}
 
