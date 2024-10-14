@@ -101,7 +101,12 @@ export default function EmployeeProfiles() {
     <PageLayout>
       <Title>Employee Profiles</Title>
       <Search onSearch={onSearch} />
-      <ProfilesTable data={filteredProfiles} />
+      <ProfilesTable
+        data={filteredProfiles}
+        scroll={{
+          x: 800,
+        }}
+      />
     </PageLayout>
   );
 }

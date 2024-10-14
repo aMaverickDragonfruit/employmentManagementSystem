@@ -95,7 +95,10 @@ const EmployeeVisaStatusTable = ({
           label = JSON.stringify(`${curFile} waiting for submission`);
         }
         return (
-          <Tag color={color} key={status}>
+          <Tag
+            color={color}
+            key={status}
+          >
             {label}
           </Tag>
         );
@@ -195,7 +198,15 @@ const EmployeeVisaStatusTable = ({
     };
   });
 
-  return <Table columns={columns} dataSource={dataSource}></Table>;
+  return (
+    <Table
+      columns={columns}
+      dataSource={dataSource}
+      scroll={{
+        x: 800,
+      }}
+    ></Table>
+  );
 };
 
 export default function EmployeeVisaStatus() {

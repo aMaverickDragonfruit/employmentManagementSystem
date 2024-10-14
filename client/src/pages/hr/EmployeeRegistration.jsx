@@ -164,6 +164,9 @@ const RegistrationTable = ({ setErr, data }) => {
     <Table
       dataSource={dataSource}
       columns={columns}
+      scroll={{
+        x: 800,
+      }}
     />
   );
 };
