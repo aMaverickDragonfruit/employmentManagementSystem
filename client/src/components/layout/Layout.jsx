@@ -1,15 +1,12 @@
-import { ConfigProvider, Layout, Spin } from 'antd';
+import { ConfigProvider, Layout } from 'antd';
 const { Content } = Layout;
 import Footer from './Footer';
 import Home from '../../pages/Home';
 import Navbar from './Navbar';
-import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import userSlice from '../../features/userSlice';
+import { Outlet, useLocation } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import AppMenu from './Menu';
-// import { fetchCurUserProfile } from '../../features/profileSlice';
-import { LoadingOutlined } from '@ant-design/icons';
+import Page500 from '../../pages/Page500';
 
 const layoutStyle = {
   position: 'relative',
@@ -22,21 +19,19 @@ export default function MainLayout() {
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const { user, isAuthenticated, loading, error } = useSelector(
-    (state) => state.userSlice
+  const {
+    user,
+    isAuthenticated,
+    error: userError,
+  } = useSelector((state) => state.userSlice);
+
+  const { curProfile, error: profileError } = useSelector(
+    (state) => state.profileSlice
   );
 
-  const {
-    curProfile,
-    loading: profileLoading,
-    error: profileError,
-  } = useSelector((state) => state.profileSlice);
-
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch(fetchCurUserProfile());
-  // }, [dispatch]);
+  if (userError || profileError) {
+    return <Page500 message={userError ? userError : profileError} />;
+  }
 
   return (
     <ConfigProvider
