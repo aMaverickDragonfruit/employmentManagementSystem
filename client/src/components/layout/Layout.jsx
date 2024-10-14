@@ -50,12 +50,7 @@ export default function MainLayout() {
         <div className='app-header fixed top-0 w-full z-50'>
           <Navbar />
           {user && isAuthenticated ? (
-            <Spin
-              spinning={profileLoading}
-              indicator={<LoadingOutlined spin />}
-            >
-              <AppMenu isHR={user.isHR} applicationStatus={curProfile.status} />
-            </Spin>
+            <AppMenu isHR={user.isHR} applicationStatus={curProfile.status} />
           ) : null}
         </div>
         <Content
